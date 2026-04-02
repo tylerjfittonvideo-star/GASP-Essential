@@ -54,7 +54,7 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
 
     body {
       background: var(--paper);
@@ -998,10 +998,13 @@
       /* Nav */
       nav              { padding: 0 1.25rem; height: 60px; }
 
-      /* Hero typography — tighter clamp floor so "Social" doesn't overflow */
-      .hl-1            { font-size: clamp(3.2rem, 17vw, 4.5rem); }
-      .hl-2            { font-size: clamp(3.8rem, 21vw, 5rem); }
-      .hl-3            { font-size: clamp(2.4rem, 12vw, 3.5rem); }
+      /* Hero typography — sized so "Social" never clips at 390px */
+      .hl-1            { font-size: clamp(2.8rem, 14vw, 3.5rem); }
+      .hl-2            { font-size: clamp(3.2rem, 16vw, 3.8rem); }
+      .hl-3            { font-size: clamp(2rem, 10vw, 2.6rem); }
+
+      /* CTA heading — reduce so long words don't clip off screen */
+      .cta-inner h2    { font-size: clamp(2.2rem, 7vw, 3rem); }
 
       /* Hero layout */
       .hero-main       { padding: 3rem 1.25rem 2rem; }
