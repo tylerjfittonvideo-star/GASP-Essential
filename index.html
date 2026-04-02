@@ -819,6 +819,38 @@
       margin-top: 0.3rem;
     }
     .cred-years.muted { color: var(--warm-gray); }
+    .cred-followers {
+      font-weight: 400;
+      opacity: 0.65;
+      text-transform: none;
+      letter-spacing: 0.03em;
+    }
+    .about-reach {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      margin-top: 2.5rem;
+      padding: 1.25rem 1.75rem;
+      background: var(--ink);
+      color: var(--paper);
+    }
+    .about-reach-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 2.2rem;
+      letter-spacing: -0.03em;
+      color: var(--orange);
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .about-reach-label {
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: var(--paper);
+      opacity: 0.8;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
     .about-education {
       margin-top: 2rem;
       padding: 1.5rem 2rem;
@@ -1152,6 +1184,10 @@
         <p class="about-bio reveal rd3" style="margin-top:1.25rem;">
           GASP! Essential exists because <strong>B2B brands deserve that same level of creative excellence.</strong> Not templated posts. Not recycled content. Work that actually moves people — and moves the needle.
         </p>
+        <div class="about-reach reveal rd3">
+          <div class="about-reach-num">~1.84M</div>
+          <div class="about-reach-label">combined social followers<br>across managed accounts</div>
+        </div>
       </div>
       <div class="about-right reveal rd1">
         <div class="about-creds">
@@ -1159,21 +1195,21 @@
             <div class="cred-dot"></div>
             <div>
               <div class="cred-org">Pittsburgh Pirates</div>
-              <div class="cred-years">MLB</div>
+              <div class="cred-years">MLB &middot; <span class="cred-followers">884K followers</span></div>
             </div>
           </div>
           <div class="cred-item">
             <div class="cred-dot"></div>
             <div>
               <div class="cred-org">Sporting Kansas City</div>
-              <div class="cred-years">MLS</div>
+              <div class="cred-years">MLS &middot; <span class="cred-followers">220K followers</span></div>
             </div>
           </div>
           <div class="cred-item">
             <div class="cred-dot dim"></div>
             <div>
               <div class="cred-org">St. Louis Blues</div>
-              <div class="cred-years muted">NHL</div>
+              <div class="cred-years muted">NHL &middot; <span class="cred-followers">734K followers</span></div>
             </div>
           </div>
         </div>
