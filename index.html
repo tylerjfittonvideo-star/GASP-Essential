@@ -144,12 +144,30 @@
       grid-template-rows: 1fr auto;
     }
     .hero-main {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 4rem;
+      align-items: center;
       padding: 5rem 3rem 3rem;
       position: relative;
       overflow: hidden;
+    }
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+    }
+    .hero-logo-large {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.9s ease forwards;
+    }
+    .hero-logo-large img {
+      width: 100%;
+      max-width: 340px;
+      height: auto;
+      filter: drop-shadow(0 12px 40px rgba(224,77,34,0.15));
     }
     .hero-kicker {
       font-family: 'DM Sans', sans-serif;
@@ -733,6 +751,100 @@
       padding: 0.25rem 0.75rem;
     }
 
+    /* ── ABOUT ── */
+    #about { background: var(--paper); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 6rem;
+      align-items: start;
+    }
+    .about-left h2 { font-size: clamp(2.5rem, 4.5vw, 5rem); margin-bottom: 2rem; }
+    .about-left h2 em {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--orange);
+    }
+    .about-bio {
+      font-size: 0.95rem;
+      line-height: 1.85;
+      color: var(--warm-gray);
+      max-width: 540px;
+    }
+    .about-bio strong { color: var(--ink); font-weight: 500; }
+    .about-creds {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--border-mid);
+      margin-top: 0.5rem;
+    }
+    .cred-item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1.5rem;
+      align-items: center;
+      padding: 1.75rem 2rem;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.25s;
+    }
+    .cred-item:last-child { border-bottom: none; }
+    .cred-item:hover { background: var(--paper-mid); }
+    .cred-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--orange);
+      flex-shrink: 0;
+    }
+    .cred-dot.dim { background: var(--border-mid); }
+    .cred-org {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.2rem;
+    }
+    .cred-role {
+      font-size: 0.78rem;
+      color: var(--warm-gray);
+      letter-spacing: 0.02em;
+    }
+    .cred-years {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-top: 0.3rem;
+    }
+    .cred-years.muted { color: var(--warm-gray); }
+    .about-education {
+      margin-top: 2rem;
+      padding: 1.5rem 2rem;
+      border: 1px solid var(--border-mid);
+      background: var(--paper-light);
+    }
+    .about-edu-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 0.5rem;
+    }
+    .about-edu-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    .about-edu-sub {
+      font-size: 0.8rem;
+      color: var(--warm-gray);
+      margin-top: 0.2rem;
+    }
+
     /* ── CTA ── */
     #cta {
       background: var(--paper-mid);
@@ -825,6 +937,9 @@
 
     /* ── Responsive ── */
     @media (max-width: 1024px) {
+      .hero-main       { grid-template-columns: 1fr; }
+      .hero-logo-large { display: none; }
+      .about-grid      { grid-template-columns: 1fr; gap: 2.5rem; }
       .problem-header  { grid-template-columns: 1fr; gap: 1.5rem; }
       .problem-cards   { grid-template-columns: 1fr; }
       .services-list   { grid-template-columns: 1fr; }
@@ -862,6 +977,7 @@
   <div class="nav-links">
     <a href="#problem">The Problem</a>
     <a href="#services">Services</a>
+    <a href="#about">About</a>
     <a href="#platforms">Platforms</a>
     <a href="#engage">Work With Us</a>
     <a href="#cta" class="nav-btn">Book a Session</a>
@@ -871,36 +987,42 @@
 <!-- ══════════════ HERO ══════════════ -->
 <section id="hero">
   <div class="hero-main">
-    <div class="hero-kicker">B2B Creative Agency</div>
+    <div class="hero-content">
+      <div class="hero-kicker">B2B Creative Agency</div>
 
-    <h1 class="hero-headline">
-      <div class="hero-line-wrap">
-        <span class="hero-line-inner hl-1">Turn</span>
-      </div>
-      <div class="hero-line-wrap">
-        <span class="hero-line-inner hl-2">Social</span>
-      </div>
-      <div class="hero-line-wrap">
-        <span class="hero-line-inner hl-3">Into <span class="serif-italic">Revenue.</span></span>
-      </div>
-    </h1>
+      <h1 class="hero-headline">
+        <div class="hero-line-wrap">
+          <span class="hero-line-inner hl-1">Turn</span>
+        </div>
+        <div class="hero-line-wrap">
+          <span class="hero-line-inner hl-2">Social</span>
+        </div>
+        <div class="hero-line-wrap">
+          <span class="hero-line-inner hl-3">Into <span class="serif-italic">Revenue.</span></span>
+        </div>
+      </h1>
 
-    <div class="hero-sub-row">
-      <p class="hero-sub">Strategy, production, and management — built for B2B companies that need social media to actually move the needle. Not just look busy.</p>
-      <div class="hero-ctas">
-        <a href="#cta" class="btn-fill">
-          Book a Strategy Session
-          <svg class="arrow-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </a>
-        <a href="#services" class="btn-ghost">
-          See How It Works
-          <svg class="arrow-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M7 3l4 4-4 4M3 7h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </a>
+      <div class="hero-sub-row">
+        <p class="hero-sub">Strategy, production, and management — built for B2B companies that need social media to actually move the needle. Not just look busy.</p>
+        <div class="hero-ctas">
+          <a href="#cta" class="btn-fill">
+            Book a Strategy Session
+            <svg class="arrow-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <a href="#services" class="btn-ghost">
+            See How It Works
+            <svg class="arrow-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M7 3l4 4-4 4M3 7h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
       </div>
+    </div>
+
+    <div class="hero-logo-large">
+      <img src="GASP_LOGO_UPD_3_TRANSPARENT.png" alt="GASP! Essential logo">
     </div>
   </div>
 
@@ -978,33 +1100,101 @@
       <div class="svc reveal">
         <div class="svc-num">01</div>
         <div class="svc-title">Content<br>Strategy</div>
+        <p style="font-size:0.83rem;line-height:1.75;color:var(--warm-gray);margin-bottom:1.5rem;">Every post we publish starts with a question: what business goal does this serve? We map your content to your sales funnel, build platform-specific calendars, and align every piece to a measurable outcome — not a vanity metric.</p>
         <ul class="svc-items">
-          <li>Platform-specific roadmaps</li>
-          <li>Aligned to your sales funnel</li>
-          <li>Built around business goals</li>
+          <li>Monthly content calendars per platform</li>
+          <li>Competitor &amp; audience analysis</li>
+          <li>Funnel-aligned messaging framework</li>
+          <li>Platform-specific content mix planning</li>
+          <li>KPI definition &amp; tracking setup</li>
+          <li>Quarterly strategy reviews</li>
         </ul>
       </div>
       <div class="svc reveal rd1">
         <div class="svc-num">02</div>
         <div class="svc-title">Content<br>Production</div>
+        <p style="font-size:0.83rem;line-height:1.75;color:var(--warm-gray);margin-bottom:1.5rem;">We produce scroll-stopping content built for each platform's native format. LinkedIn carousels, Instagram Reels, campaign graphics — everything created in-house to a professional broadcast standard, informed by years of real in-house creative experience.</p>
         <ul class="svc-items">
-          <li>High-quality graphics &amp; video</li>
-          <li>Short-form &amp; campaign assets</li>
-          <li>Copywriting &amp; captions</li>
+          <li>LinkedIn carousels &amp; thought leadership</li>
+          <li>Short-form video (Reels, TikTok-format)</li>
+          <li>Branded graphics &amp; visual templates</li>
+          <li>Campaign assets &amp; paid ad creative</li>
+          <li>Copywriting, captions &amp; hooks</li>
+          <li>Brand voice development &amp; guidelines</li>
         </ul>
       </div>
       <div class="svc reveal rd2">
         <div class="svc-num">03</div>
         <div class="svc-title">Content<br>Management</div>
+        <p style="font-size:0.83rem;line-height:1.75;color:var(--warm-gray);margin-bottom:1.5rem;">We handle the day-to-day so you don't have to. Scheduling, publishing, community engagement, performance tracking — all covered and summarized in a clear monthly reporting call so you always know what's working.</p>
         <ul class="svc-items">
-          <li>Scheduling &amp; publishing</li>
-          <li>Community engagement</li>
-          <li>Analytics &amp; monthly reporting</li>
+          <li>Platform scheduling &amp; publishing</li>
+          <li>Community management &amp; replies</li>
+          <li>Monthly performance reports</li>
+          <li>A/B testing &amp; content optimization</li>
+          <li>Paid amplification management</li>
+          <li>Ongoing strategy refinement</li>
         </ul>
       </div>
     </div>
   </div>
 </section>
+
+<!-- ══════════════ ABOUT ══════════════ -->
+<section id="about">
+  <div class="section-inner" style="background:var(--paper-light); padding-top:7rem; padding-bottom:7rem;">
+    <div class="section-tag reveal">The Person Behind It</div>
+    <div class="about-grid">
+      <div class="about-left">
+        <h2 class="section-h reveal">Built by someone who's been <em>inside the arena.</em></h2>
+        <p class="about-bio reveal rd1" style="margin-top:2rem;">
+          My name is <strong>Tyler Fitton</strong>. I studied <strong>Digital Storytelling at the University of Missouri-Columbia</strong> — one of the top journalism and media programs in the country — and spent the next six years putting that education to work inside some of the most recognizable sports organizations in North America.
+        </p>
+        <p class="about-bio reveal rd2" style="margin-top:1.25rem;">
+          I know what it takes to produce content under real deadlines, for real audiences, tied to real business outcomes. That experience — the discipline, the platform fluency, the storytelling instinct — is exactly what I bring to every GASP! Essential client.
+        </p>
+        <p class="about-bio reveal rd3" style="margin-top:1.25rem;">
+          GASP! Essential exists because <strong>B2B brands deserve that same level of creative excellence.</strong> Not templated posts. Not recycled content. Work that actually moves people — and moves the needle.
+        </p>
+      </div>
+      <div class="about-right reveal rd1">
+        <div class="about-creds">
+          <div class="cred-item">
+            <div class="cred-dot"></div>
+            <div>
+              <div class="cred-org">Pittsburgh Pirates</div>
+              <div class="cred-role">In-House Creative Team</div>
+              <div class="cred-years">2022 – 2024 · MLB</div>
+            </div>
+          </div>
+          <div class="cred-item">
+            <div class="cred-dot"></div>
+            <div>
+              <div class="cred-org">Sporting Kansas City</div>
+              <div class="cred-role">In-House Creative Team</div>
+              <div class="cred-years">2022 – 2024 · MLS</div>
+            </div>
+          </div>
+          <div class="cred-item">
+            <div class="cred-dot dim"></div>
+            <div>
+              <div class="cred-org">St. Louis Blues</div>
+              <div class="cred-role">Creative Intern</div>
+              <div class="cred-years muted">2020 – 2022 · NHL</div>
+            </div>
+          </div>
+        </div>
+        <div class="about-education reveal rd2">
+          <div class="about-edu-label">Education</div>
+          <div class="about-edu-name">University of Missouri-Columbia</div>
+          <div class="about-edu-sub">B.S. Digital Storytelling · Missouri School of Journalism</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
 
 <!-- ══════════════ PLATFORMS ══════════════ -->
 <section id="platforms">
@@ -1206,6 +1396,7 @@
   <div class="footer-links">
     <a href="#problem">The Problem</a>
     <a href="#services">Services</a>
+    <a href="#about">About</a>
     <a href="#platforms">Platforms</a>
     <a href="#engage">Work With Us</a>
   </div>
