@@ -966,6 +966,8 @@
     .rd4 { transition-delay: 0.32s; }
 
     /* ── Responsive ── */
+    .nav-mobile-cta { display: none; }
+
     @media (max-width: 1024px) {
       .hero-logo-large { display: none; }
       .about-grid      { grid-template-columns: 1fr; gap: 2.5rem; }
@@ -989,10 +991,68 @@
       .section-inner   { padding: 5rem 1.5rem; }
       footer           { padding: 2rem 1.5rem; }
       .nav-links       { display: none; }
+      .nav-mobile-cta  { display: inline-flex; }
     }
+
     @media (max-width: 640px) {
+      /* Nav */
+      nav              { padding: 0 1.25rem; height: 60px; }
+
+      /* Hero typography — tighter clamp floor so "Social" doesn't overflow */
+      .hl-1            { font-size: clamp(3.2rem, 17vw, 4.5rem); }
+      .hl-2            { font-size: clamp(3.8rem, 21vw, 5rem); }
+      .hl-3            { font-size: clamp(2.4rem, 12vw, 3.5rem); }
+
+      /* Hero layout */
+      .hero-main       { padding: 3rem 1.25rem 2rem; }
+      .hero-sub        { max-width: 100%; font-size: 0.92rem; }
+      .hero-sub-row    { flex-direction: column; align-items: flex-start; gap: 1.75rem; margin-top: 2rem; }
+      .hero-ctas       { flex-direction: column; align-items: stretch; width: 100%; }
+      .btn-fill        { justify-content: center; }
+
+      /* Hero stats */
+      .hstat           { padding: 1.25rem 1.25rem; }
+      .hstat-num       { font-size: 1.8rem; }
+
+      /* Section scaffolding */
+      .section-inner   { padding: 4rem 1.25rem; }
+      .section-tag     { margin-bottom: 2rem; }
+
+      /* Problem cards */
+      .prob-card       { padding: 1.75rem 1.5rem; }
+
+      /* Services */
+      .svc             { padding: 2rem 1.5rem; }
+
+      /* Platforms dark section */
+      .plat-card       { padding: 2rem 1.5rem; }
+      .plat-role       { font-size: 1.25rem; }
+      .plat-stat-num   { font-size: 1.5rem; }
+
+      /* Proof/stats bar */
       .proof-bar       { grid-template-columns: 1fr 1fr; }
-      .hero-ctas       { flex-direction: column; align-items: flex-start; }
+      .pstat           { padding: 1.5rem 1.25rem; }
+      .pstat-num       { font-size: 2.2rem; }
+
+      /* Why section */
+      .why-card        { padding: 1.5rem 1.25rem; gap: 1rem; }
+
+      /* Engage / pricing cards */
+      .engage-cards    { gap: 1rem; }
+      .eng-card        { padding: 2rem 1.5rem; }
+      .eng-tag-popular { left: 1.5rem; }
+
+      /* About */
+      .about-reach     { flex-direction: column; gap: 0.5rem; padding: 1.25rem 1.25rem; }
+      .about-reach-num { font-size: 2.8rem; }
+      .about-education { padding: 1.25rem 1.5rem; }
+
+      /* CTA */
+      .cta-inner       { padding: 4rem 1.25rem; gap: 2.5rem; }
+
+      /* Footer */
+      footer           { padding: 2rem 1.25rem; flex-direction: column; align-items: flex-start; gap: 1.25rem; }
+      .footer-links    { flex-wrap: wrap; gap: 1rem 1.5rem; }
     }
   </style>
 </head>
@@ -1011,6 +1071,7 @@
     <a href="#engage">Work With Us</a>
     <a href="#cta" class="nav-btn">Book a Session</a>
   </div>
+  <a href="#cta" class="nav-btn nav-mobile-cta">Book a Session</a>
 </nav>
 
 <!-- ══════════════ HERO ══════════════ -->
