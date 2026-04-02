@@ -144,10 +144,9 @@
       grid-template-rows: 1fr auto;
     }
     .hero-main {
-      display: grid;
-      grid-template-columns: 1fr 340px;
-      gap: 4rem;
-      align-items: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
       padding: 5rem 3rem 3rem;
       position: relative;
       overflow: hidden;
@@ -157,17 +156,15 @@
       flex-direction: column;
     }
     .hero-logo-large {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: absolute;
+      top: 2rem;
+      right: 3rem;
       opacity: 0;
       animation: fadeUp 0.8s 0.9s ease forwards;
     }
     .hero-logo-large img {
-      width: 100%;
-      max-width: 340px;
+      width: 200px;
       height: auto;
-      filter: drop-shadow(0 12px 40px rgba(224,77,34,0.15));
     }
     .hero-kicker {
       font-family: 'DM Sans', sans-serif;
@@ -937,7 +934,6 @@
 
     /* ── Responsive ── */
     @media (max-width: 1024px) {
-      .hero-main       { grid-template-columns: 1fr; }
       .hero-logo-large { display: none; }
       .about-grid      { grid-template-columns: 1fr; gap: 2.5rem; }
       .problem-header  { grid-template-columns: 1fr; gap: 1.5rem; }
@@ -987,6 +983,9 @@
 <!-- ══════════════ HERO ══════════════ -->
 <section id="hero">
   <div class="hero-main">
+    <div class="hero-logo-large">
+      <img src="GASP_LOGO_UPD_BLACK_TRANSPARENT.png" alt="GASP! Essential logo">
+    </div>
     <div class="hero-content">
       <div class="hero-kicker">B2B Creative Agency</div>
 
@@ -1019,10 +1018,6 @@
           </a>
         </div>
       </div>
-    </div>
-
-    <div class="hero-logo-large">
-      <img src="GASP_LOGO_UPD_BLACK_TRANSPARENT.png" alt="GASP! Essential logo">
     </div>
   </div>
 
