@@ -1,0 +1,23 @@
+# Design source files
+*.psd
+*.ai
+*.sketch
+*.fig
+
+# Pitch deck / internal docs
+*.pptx
+*.ppt
+*.docx
+*.pdf
+
+# Screenshots / temp files
+temporary screenshots/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Node (if added later)
+node_modules/

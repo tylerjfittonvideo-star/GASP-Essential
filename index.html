@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GASP! Essential — Turn Social Into Revenue</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    // Disable animations for headless/preview screenshots
+    if (params.get('preview') === '1') {
+      document.documentElement.classList.add('no-anim');
+    }
+    // Scroll to section for screenshotting
+    const scrollTo = params.get('scrollto');
+    if (scrollTo) {
+      window.addEventListener('load', () => {
+        const el = document.getElementById(scrollTo);
+        if (el) el.scrollIntoView();
+      });
+    }
+  </script>
+  <style>
+    .no-anim *, .no-anim *::before, .no-anim *::after {
+      animation-duration: 0.001ms !important;
+      animation-delay: 0ms !important;
+      transition-duration: 0.001ms !important;
+    }
+    .no-anim .hero-line-inner { transform: none !important; }
+    .no-anim .hero-kicker,
+    .no-anim .hero-sub-row,
+    .no-anim .hero-stats { opacity: 1 !important; transform: none !important; animation: none !important; }
+    .no-anim .reveal { opacity: 1 !important; transform: none !important; }
+    .no-anim #hero { min-height: auto !important; }
+  </style>
+
+  <style>
+    :root {
+      --paper:       #ECE5D8;
+      --paper-light: #F4EFE5;
+      --paper-mid:   #E4DCCF;
+      --paper-dark:  #D8D0C2;
+      --ink:         #1A1410;
+      --ink-mid:     #3A3028;
+      --orange:      #E04D22;
+      --orange-soft: rgba(224, 77, 34, 0.10);
+      --orange-line: rgba(224, 77, 34, 0.25);
+      --warm-gray:   #7C6E62;
+      --border:      rgba(26, 20, 16, 0.10);
+      --border-mid:  rgba(26, 20, 16, 0.18);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ── Paper grain overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.055;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='1'/%3E%3C/svg%3E");
+      background-size: 220px;
+    }
+
+    /* ── Type scale ── */
+    .syne         { font-family: 'Syne', sans-serif; }
+    .serif-italic { font-family: 'Instrument Serif', serif; font-style: italic; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(236,229,216,0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 3rem;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      width: 148px;
+      height: 48px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .nav-logo img {
+      width: 148px;
+      height: 148px;
+      object-fit: cover;
+      object-position: center 44%;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
+    .nav-links a {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--warm-gray);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-btn {
+      background: var(--orange) !important;
+      color: #fff !important;
+      padding: 0.55rem 1.3rem !important;
+      font-weight: 500 !important;
+      font-size: 0.78rem !important;
+      letter-spacing: 0.06em !important;
+      text-transform: uppercase !important;
+      border-radius: 2px;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .nav-btn:hover { background: var(--ink) !important; transform: translateY(-1px); }
+
+    /* ── HERO ── */
+    #hero {
+      padding-top: 68px;
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: 1fr auto;
+    }
+    .hero-main {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 5rem 3rem 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-kicker {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--orange);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.2s ease forwards;
+    }
+    .hero-kicker::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--orange);
+    }
+    .hero-headline {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      line-height: 0.9;
+      letter-spacing: -0.03em;
+    }
+    .hero-line-wrap { overflow: hidden; }
+    .hero-line-inner {
+      display: block;
+      transform: translateY(105%);
+      animation: lineUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .hl-1 { font-size: clamp(4.5rem, 10vw, 11rem); color: var(--ink); animation-delay: 0.35s; }
+    .hl-2 { font-size: clamp(5rem, 13vw, 15rem); color: var(--orange); animation-delay: 0.48s; margin-left: -0.04em; }
+    .hl-3 { font-size: clamp(3.5rem, 7.5vw, 8.5rem); color: var(--ink); animation-delay: 0.62s; }
+    .hl-3 .serif-italic { font-size: 0.85em; color: var(--ink-mid); }
+
+    .hero-sub-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-top: 3.5rem;
+      gap: 3rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.8s ease forwards;
+    }
+    .hero-sub {
+      max-width: 480px;
+      font-size: 1rem;
+      line-height: 1.75;
+      color: var(--warm-gray);
+    }
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+
+    /* ── Buttons ── */
+    .btn-fill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--orange);
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.85rem 1.75rem;
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 24px rgba(224,77,34,0.22);
+    }
+    .btn-fill:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(224,77,34,0.3);
+    }
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: transparent;
+      color: var(--ink);
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.85rem 0;
+      border-bottom: 1.5px solid var(--border-mid);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--orange); color: var(--orange); }
+    .arrow-icon { transition: transform 0.25s ease; }
+    .btn-fill:hover .arrow-icon,
+    .btn-ghost:hover .arrow-icon { transform: translateX(4px); }
+
+    /* ── Hero stats bar ── */
+    .hero-stats {
+      border-top: 1px solid var(--border-mid);
+      background: var(--paper-mid);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      opacity: 0;
+      animation: fadeUp 0.7s 1s ease forwards;
+    }
+    .hstat {
+      padding: 1.75rem 3rem;
+      border-right: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+    .hstat:last-child { border-right: none; }
+    .hstat-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 2.2rem;
+      color: var(--orange);
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .hstat-text {
+      font-size: 0.78rem;
+      line-height: 1.5;
+      color: var(--warm-gray);
+    }
+
+    /* ── Section layout ── */
+    section { position: relative; }
+    .section-inner { padding: 7rem 3rem; }
+    .section-rule {
+      border: none;
+      border-top: 1px solid var(--border-mid);
+      margin: 0;
+    }
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 3rem;
+    }
+    .section-tag::before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 1px;
+      background: var(--orange);
+    }
+    .section-h {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 0.95;
+    }
+
+    /* ── PROBLEM ── */
+    #problem { background: var(--paper-light); }
+    .problem-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: end;
+      margin-bottom: 4rem;
+    }
+    .problem-header h2 {
+      font-size: clamp(2.5rem, 4.5vw, 5rem);
+    }
+    .problem-header p {
+      font-size: 0.92rem;
+      line-height: 1.8;
+      color: var(--warm-gray);
+      padding-bottom: 0.5rem;
+    }
+    .problem-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .prob-card {
+      background: var(--paper-light);
+      padding: 2.5rem;
+      transition: background 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .prob-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--orange);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .prob-card:hover { background: var(--paper-mid); }
+    .prob-card:hover::after { transform: scaleX(1); }
+    .prob-icon {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--border-mid);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      color: var(--orange);
+    }
+    .prob-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.75rem;
+    }
+    .prob-card p {
+      font-size: 0.83rem;
+      line-height: 1.75;
+      color: var(--warm-gray);
+    }
+
+    /* ── SERVICES ── */
+    #services { background: var(--paper); }
+    .services-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 4rem;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    .services-head h2 { font-size: clamp(2.5rem, 4.5vw, 5rem); }
+    .services-head .serif-italic {
+      font-size: clamp(1.8rem, 3.5vw, 3.5rem);
+      font-weight: 400;
+      color: var(--orange);
+    }
+    .services-head p {
+      max-width: 340px;
+      font-size: 0.88rem;
+      line-height: 1.75;
+      color: var(--warm-gray);
+    }
+    .services-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border: 1px solid var(--border-mid);
+    }
+    .svc {
+      padding: 3rem;
+      border-right: 1px solid var(--border-mid);
+      position: relative;
+      transition: background 0.3s;
+    }
+    .svc:last-child { border-right: none; }
+    .svc:hover { background: var(--paper-mid); }
+    .svc-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--orange);
+      margin-bottom: 2rem;
+    }
+    .svc-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.25rem;
+      line-height: 1.1;
+    }
+    .svc-items {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .svc-items li {
+      font-size: 0.82rem;
+      color: var(--warm-gray);
+      line-height: 1.5;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .svc-items li::before {
+      content: '→';
+      color: var(--orange);
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    /* ── PLATFORMS ── */
+    #platforms { background: var(--ink); color: var(--paper); }
+    #platforms .section-tag { color: var(--orange); }
+    #platforms .section-tag::before { background: var(--orange); }
+    #platforms .section-rule { border-color: rgba(255,255,255,0.08); }
+    .platforms-head {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 4rem;
+      align-items: end;
+      margin-bottom: 5rem;
+    }
+    .platforms-head h2 {
+      font-size: clamp(2.5rem, 5vw, 5.5rem);
+      color: var(--paper);
+    }
+    .platforms-head h2 span { color: var(--orange); }
+    .platforms-head p {
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: rgba(236,229,216,0.55);
+    }
+    .platform-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .plat-card {
+      background: var(--ink);
+      padding: 3rem;
+      transition: background 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .plat-card:hover { background: #231e19; }
+    .plat-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--orange-soft);
+      border: 1px solid var(--orange-line);
+      border-radius: 2px;
+      padding: 0.35rem 0.75rem;
+      margin-bottom: 2.5rem;
+    }
+    .plat-badge-label {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--orange);
+    }
+    .plat-role {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.5rem;
+      letter-spacing: -0.02em;
+      color: var(--paper);
+      margin-bottom: 0.5rem;
+      line-height: 1.1;
+    }
+    .plat-role-sub {
+      font-size: 0.8rem;
+      color: rgba(236,229,216,0.45);
+      margin-bottom: 2rem;
+    }
+    .plat-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 2rem;
+    }
+    .plat-stat-row {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+    }
+    .plat-stat-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.8rem;
+      color: var(--orange);
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .plat-stat-label {
+      font-size: 0.78rem;
+      color: rgba(236,229,216,0.5);
+      line-height: 1.4;
+    }
+    .plat-quote {
+      margin-top: 2.5rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 1.75rem;
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: rgba(236,229,216,0.6);
+    }
+
+    /* ── STATS BAR ── */
+    .proof-bar {
+      background: var(--orange);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .pstat {
+      padding: 2.5rem 2.5rem;
+      border-right: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+    }
+    .pstat:last-child { border-right: none; }
+    .pstat-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 2.8rem;
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+    .pstat-label {
+      font-size: 0.78rem;
+      opacity: 0.75;
+      letter-spacing: 0.04em;
+      line-height: 1.4;
+    }
+
+    /* ── WHY ── */
+    #why { background: var(--paper-light); }
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+      margin-bottom: 4rem;
+    }
+    .why-grid h2 { font-size: clamp(2.5rem, 4.5vw, 5rem); }
+    .why-grid h2 em {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--orange);
+    }
+    .why-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--border-mid);
+    }
+    .why-card {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 1.5rem;
+      padding: 2rem 2rem;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.25s;
+      align-items: start;
+    }
+    .why-card:last-child { border-bottom: none; }
+    .why-card:hover { background: var(--paper-mid); }
+    .why-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      color: var(--orange);
+      padding-top: 0.15rem;
+    }
+    .why-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.4rem;
+    }
+    .why-card p {
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: var(--warm-gray);
+    }
+
+    /* ── ENGAGE ── */
+    #engage { background: var(--paper); }
+    .engage-head {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: end;
+      margin-bottom: 4rem;
+    }
+    .engage-head h2 { font-size: clamp(2.5rem, 4.5vw, 5rem); }
+    .engage-head p {
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: var(--warm-gray);
+    }
+    .engage-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .eng-card {
+      border: 1px solid var(--border-mid);
+      padding: 2.5rem;
+      position: relative;
+      background: var(--paper-light);
+      transition: background 0.25s, border-color 0.25s, transform 0.25s;
+    }
+    .eng-card:hover {
+      background: var(--paper-mid);
+      border-color: var(--orange);
+      transform: translateY(-4px);
+    }
+    .eng-card.featured {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: var(--paper);
+    }
+    .eng-card.featured:hover { background: var(--ink-mid); border-color: var(--orange); }
+    .eng-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--orange);
+      margin-bottom: 1.5rem;
+    }
+    .eng-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+    }
+    .eng-card.featured .eng-title { color: var(--paper); }
+    .eng-desc {
+      font-size: 0.83rem;
+      line-height: 1.75;
+      color: var(--warm-gray);
+      margin-bottom: 2rem;
+    }
+    .eng-card.featured .eng-desc { color: rgba(236,229,216,0.55); }
+    .eng-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--orange);
+      border-top: 1px solid var(--orange-line);
+      padding-top: 1rem;
+      margin-top: auto;
+    }
+    .eng-tag-popular {
+      position: absolute;
+      top: -12px;
+      left: 2.5rem;
+      background: var(--orange);
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.75rem;
+    }
+
+    /* ── CTA ── */
+    #cta {
+      background: var(--paper-mid);
+      border-top: 1px solid var(--border-mid);
+    }
+    .cta-inner {
+      padding: 8rem 3rem;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+    .cta-inner h2 {
+      font-size: clamp(3rem, 6vw, 7rem);
+      line-height: 0.92;
+    }
+    .cta-inner h2 em {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--orange);
+    }
+    .cta-right { display: flex; flex-direction: column; gap: 2rem; }
+    .cta-right p {
+      font-size: 0.92rem;
+      line-height: 1.8;
+      color: var(--warm-gray);
+    }
+    .cta-email {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 2px solid var(--orange);
+      padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+    .cta-email:hover { color: var(--orange); }
+    .cta-note {
+      font-size: 0.75rem;
+      color: var(--warm-gray);
+      letter-spacing: 0.04em;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 2.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    footer img { height: 44px; opacity: 0.55; filter: brightness(0) invert(1); }
+    .footer-links { display: flex; gap: 2rem; }
+    .footer-links a {
+      font-size: 0.72rem;
+      color: rgba(236,229,216,0.4);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--paper); }
+    footer small { font-size: 0.7rem; color: rgba(236,229,216,0.25); }
+
+    /* ── Reveal animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes lineUp {
+      to { transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .reveal.in { opacity: 1; transform: none; }
+    .rd1 { transition-delay: 0.08s; }
+    .rd2 { transition-delay: 0.16s; }
+    .rd3 { transition-delay: 0.24s; }
+    .rd4 { transition-delay: 0.32s; }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .problem-header  { grid-template-columns: 1fr; gap: 1.5rem; }
+      .problem-cards   { grid-template-columns: 1fr; }
+      .services-list   { grid-template-columns: 1fr; }
+      .svc             { border-right: none; border-bottom: 1px solid var(--border-mid); }
+      .svc:last-child  { border-bottom: none; }
+      .platform-cards  { grid-template-columns: 1fr; }
+      .proof-bar       { grid-template-columns: repeat(2,1fr); }
+      .why-grid        { grid-template-columns: 1fr; gap: 2.5rem; }
+      .engage-head     { grid-template-columns: 1fr; gap: 1.5rem; }
+      .engage-cards    { grid-template-columns: 1fr; }
+      .cta-inner       { grid-template-columns: 1fr; gap: 3rem; padding: 5rem 1.5rem; }
+      .platforms-head  { grid-template-columns: 1fr; gap: 1.5rem; }
+      nav              { padding: 0 1.5rem; }
+      .hero-main       { padding: 4rem 1.5rem 2rem; }
+      .hero-stats      { grid-template-columns: 1fr; }
+      .hstat           { border-right: none; border-bottom: 1px solid var(--border); }
+      .hstat:last-child { border-bottom: none; }
+      .section-inner   { padding: 5rem 1.5rem; }
+      footer           { padding: 2rem 1.5rem; }
+      .nav-links       { display: none; }
+    }
+    @media (max-width: 640px) {
+      .proof-bar       { grid-template-columns: 1fr 1fr; }
+      .hero-ctas       { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ NAV ══════════════ -->
+<nav>
+  <a href="#" class="nav-logo">
+    <img src="GASP_LOGO_UPD_3_TRANSPARENT.png" alt="GASP! Essential">
+  </a>
+  <div class="nav-links">
+    <a href="#problem">The Problem</a>
+    <a href="#services">Services</a>
+    <a href="#platforms">Platforms</a>
+    <a href="#engage">Work With Us</a>
+    <a href="#cta" class="nav-btn">Book a Session</a>
+  </div>
+</nav>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section id="hero">
+  <div class="hero-main">
+    <div class="hero-kicker">B2B Creative Agency</div>
+
+    <h1 class="hero-headline">
+      <div class="hero-line-wrap">
+        <span class="hero-line-inner hl-1">Turn</span>
+      </div>
+      <div class="hero-line-wrap">
+        <span class="hero-line-inner hl-2">Social</span>
+      </div>
+      <div class="hero-line-wrap">
+        <span class="hero-line-inner hl-3">Into <span class="serif-italic">Revenue.</span></span>
+      </div>
+    </h1>
+
+    <div class="hero-sub-row">
+      <p class="hero-sub">Strategy, production, and management — built for B2B companies that need social media to actually move the needle. Not just look busy.</p>
+      <div class="hero-ctas">
+        <a href="#cta" class="btn-fill">
+          Book a Strategy Session
+          <svg class="arrow-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a href="#services" class="btn-ghost">
+          See How It Works
+          <svg class="arrow-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M7 3l4 4-4 4M3 7h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hstat">
+      <div class="hstat-num">72%</div>
+      <div class="hstat-text">of salespeople using social outperform their peers &amp; exceed quota 23% more often</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-num">83%</div>
+      <div class="hstat-text">of marketers say social is now their primary customer acquisition channel</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-num">10.2%</div>
+      <div class="hstat-text">avg. YoY revenue growth for social-first B2B brands vs. peers — Deloitte Digital, 2024</div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- ══════════════ PROBLEM ══════════════ -->
+<section id="problem">
+  <div class="section-inner">
+    <div class="section-tag reveal">The Problem</div>
+    <div class="problem-header">
+      <h2 class="section-h reveal">Most B2B companies are <em class="serif-italic" style="color:var(--orange)">invisible</em> on social.</h2>
+      <p class="reveal rd1">Your competitors are showing up every day. Earning trust, building pipeline, closing deals — because they figured out social. You haven't. Yet.</p>
+    </div>
+    <div class="problem-cards">
+      <div class="prob-card reveal">
+        <div class="prob-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M9 3v6l4 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.4"/>
+          </svg>
+        </div>
+        <h3>Inconsistent Posting</h3>
+        <p>Random content with no connection to the sales funnel or business goals. You're busy, not strategic — and your audience can tell.</p>
+      </div>
+      <div class="prob-card reveal rd1">
+        <div class="prob-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <rect x="2" y="5" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
+            <path d="M6 5V4a3 3 0 016 0v1" stroke="currentColor" stroke-width="1.4"/>
+          </svg>
+        </div>
+        <h3>No Platform Expertise</h3>
+        <p>One-size-fits-all content that ignores how LinkedIn, Facebook, and Instagram actually work. Each platform is a different game.</p>
+      </div>
+      <div class="prob-card reveal rd2">
+        <div class="prob-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M3 13l4-4 3 3 5-6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>Content That Doesn't Convert</h3>
+        <p>Engagement without pipeline. Social presence that looks active but delivers zero ROI — vanity metrics masking a broken funnel.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- ══════════════ SERVICES ══════════════ -->
+<section id="services">
+  <div class="section-inner">
+    <div class="section-tag reveal">What We Do</div>
+    <div class="services-head">
+      <h2 class="section-h reveal">Three prongs.<br><span class="serif-italic" style="color:var(--orange);font-weight:400;font-family:'Instrument Serif',serif;font-style:italic;">One engine.</span></h2>
+      <p class="reveal rd1">Every engagement covers strategy, production, and management — three disciplines that only work when they move together. We own all three.</p>
+    </div>
+    <div class="services-list">
+      <div class="svc reveal">
+        <div class="svc-num">01</div>
+        <div class="svc-title">Content<br>Strategy</div>
+        <ul class="svc-items">
+          <li>Platform-specific roadmaps</li>
+          <li>Aligned to your sales funnel</li>
+          <li>Built around business goals</li>
+        </ul>
+      </div>
+      <div class="svc reveal rd1">
+        <div class="svc-num">02</div>
+        <div class="svc-title">Content<br>Production</div>
+        <ul class="svc-items">
+          <li>High-quality graphics &amp; video</li>
+          <li>Short-form &amp; campaign assets</li>
+          <li>Copywriting &amp; captions</li>
+        </ul>
+      </div>
+      <div class="svc reveal rd2">
+        <div class="svc-num">03</div>
+        <div class="svc-title">Content<br>Management</div>
+        <ul class="svc-items">
+          <li>Scheduling &amp; publishing</li>
+          <li>Community engagement</li>
+          <li>Analytics &amp; monthly reporting</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ PLATFORMS ══════════════ -->
+<section id="platforms">
+  <div class="section-inner">
+    <div class="section-tag reveal">Platform Strategy</div>
+    <div class="platforms-head">
+      <h2 class="section-h reveal">Three platforms.<br><span style="color:var(--orange)">One strategy.</span></h2>
+      <p class="reveal rd1">The data supports a clear hierarchy: LinkedIn for lead quality, Facebook for paid ROI, Instagram for brand trust. We know how to use all three — and never treat them the same.</p>
+    </div>
+    <div class="platform-cards">
+      <div class="plat-card reveal">
+        <div class="plat-badge">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2" fill="currentColor" class="text-orange" style="color:var(--orange)"/><path d="M4 10V6M4 4.5v-.01M7.5 10V7.5c0-1 .5-1.5 1.5-1.5h.5c1 0 1.5.5 1.5 1.5V10" stroke="#1A1410" stroke-width="1" stroke-linecap="round"/></svg>
+          <span class="plat-badge-label">LinkedIn</span>
+        </div>
+        <div class="plat-role">Fills the Pipeline</div>
+        <div class="plat-role-sub">Decision-maker reach and lead quality</div>
+        <div class="plat-stats">
+          <div class="plat-stat-row">
+            <span class="plat-stat-num">80%</span>
+            <span class="plat-stat-label">of B2B social leads come from LinkedIn</span>
+          </div>
+          <div class="plat-stat-row">
+            <span class="plat-stat-num">4×</span>
+            <span class="plat-stat-label">bottom-line impact from brand-focused campaigns</span>
+          </div>
+          <div class="plat-stat-row">
+            <span class="plat-stat-num">50%</span>
+            <span class="plat-stat-label">improvement in MQLs from brand-focused content</span>
+          </div>
+        </div>
+        <p class="plat-quote">It's where decision-makers live — and where your brand earns the right to sell.</p>
+      </div>
+
+      <div class="plat-card reveal rd1">
+        <div class="plat-badge">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2" fill="currentColor" style="color:var(--orange)"/><path d="M8.5 4H7.5C6.7 4 6 4.7 6 5.5V7H4.5v2H6v3.5h2V9h1.5l.5-2H8V5.5C8 5.2 8.2 5 8.5 5h.5V4z" fill="#1A1410"/></svg>
+          <span class="plat-badge-label">Facebook</span>
+        </div>
+        <div class="plat-role">Drives ROI</div>
+        <div class="plat-role-sub">Hyper-targeted paid reach and community building</div>
+        <div class="plat-stats">
+          <div class="plat-stat-row">
+            <span class="plat-stat-num">#1</span>
+            <span class="plat-stat-label">for overall social ROI among B2B marketers — Statista</span>
+          </div>
+          <div class="plat-stat-row">
+            <span class="plat-stat-num">Job</span>
+            <span class="plat-stat-label">title, company size &amp; industry targeting — unmatched precision</span>
+          </div>
+        </div>
+        <p class="plat-quote">Facebook's targeting precision makes it the most efficient paid channel for B2B — when you know how to use it.</p>
+      </div>
+
+      <div class="plat-card reveal rd2">
+        <div class="plat-badge">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2.5" fill="currentColor" style="color:var(--orange)"/><circle cx="7" cy="7" r="2.5" stroke="#1A1410" stroke-width="1"/><circle cx="10" cy="4" r="0.5" fill="#1A1410"/></svg>
+          <span class="plat-badge-label">Instagram</span>
+        </div>
+        <div class="plat-role">Builds Trust</div>
+        <div class="plat-role-sub">Engagement volume and brand visibility at scale</div>
+        <div class="plat-stats">
+          <div class="plat-stat-row">
+            <span class="plat-stat-num">68%</span>
+            <span class="plat-stat-label">trust rate for positive ROI among global marketers</span>
+          </div>
+          <div class="plat-stat-row">
+            <span class="plat-stat-num">2nd</span>
+            <span class="plat-stat-label">most trusted B2B platform for returns after LinkedIn</span>
+          </div>
+        </div>
+        <p class="plat-quote">While LinkedIn wins lead quality, Instagram wins reach — keeping your brand top of mind through long decision cycles.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ PROOF BAR ══════════════ -->
+<div class="proof-bar">
+  <div class="pstat reveal">
+    <div class="pstat-num">91%</div>
+    <div class="pstat-label">of marketers now use content marketing in some form — DemandSage, 2025</div>
+  </div>
+  <div class="pstat reveal rd1">
+    <div class="pstat-num">78%</div>
+    <div class="pstat-label">of B2B marketers use video, 50%+ plan to increase spend — LinkedIn, 2025</div>
+  </div>
+  <div class="pstat reveal rd2">
+    <div class="pstat-num">33%</div>
+    <div class="pstat-label">higher ROI for brands allocating 20%+ of budget to social — Sprinklr</div>
+  </div>
+  <div class="pstat reveal rd3">
+    <div class="pstat-num">42%</div>
+    <div class="pstat-label">of salespeople say social delivers highest cold outreach response rate — HubSpot</div>
+  </div>
+</div>
+
+<!-- ══════════════ WHY ══════════════ -->
+<section id="why">
+  <div class="section-inner">
+    <div class="section-tag reveal">Why GASP! Essential</div>
+    <div class="why-grid">
+      <div>
+        <h2 class="section-h reveal">We don't just post.<br><em>We perform.</em></h2>
+      </div>
+      <div class="why-cards reveal rd1">
+        <div class="why-card">
+          <div class="why-num">01</div>
+          <div>
+            <h3>Results-Driven</h3>
+            <p>Every piece of content is tied to a business outcome — leads, pipeline, or brand authority. No vanity metrics, no fluffy reports.</p>
+          </div>
+        </div>
+        <div class="why-card">
+          <div class="why-num">02</div>
+          <div>
+            <h3>Platform Experts</h3>
+            <p>We know what works on LinkedIn vs. Facebook vs. Instagram — and we never treat them the same. Specialization is how we win.</p>
+          </div>
+        </div>
+        <div class="why-card">
+          <div class="why-num">03</div>
+          <div>
+            <h3>Data-Backed Stories</h3>
+            <p>We combine platform-specific expertise with storytelling that moves your audience forward — not just scroll past.</p>
+          </div>
+        </div>
+        <div class="why-card">
+          <div class="why-num">04</div>
+          <div>
+            <h3>Full Service</h3>
+            <p>Strategy to scheduling — we handle everything so you can focus on running your business. One partner, no hand-offs.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-rule">
+
+<!-- ══════════════ ENGAGE ══════════════ -->
+<section id="engage">
+  <div class="section-inner">
+    <div class="section-tag reveal">How We Engage</div>
+    <div class="engage-head">
+      <h2 class="section-h reveal">Pick your<br><span class="serif-italic" style="color:var(--orange);font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;">starting point.</span></h2>
+      <p class="reveal rd1">Every engagement starts with a strategy session to define goals, platforms, and content approach. No obligation — just a real conversation about what's possible for your business.</p>
+    </div>
+    <div class="engage-cards">
+      <div class="eng-card reveal">
+        <div class="eng-num">01</div>
+        <div class="eng-title">Monthly Retainer</div>
+        <p class="eng-desc">Ongoing strategy, production, and management — your always-on social engine. The most impactful way to build lasting pipeline.</p>
+        <div class="eng-tag">Most Popular</div>
+      </div>
+      <div class="eng-card featured reveal rd1" style="position:relative;">
+        <div class="eng-tag-popular">Recommended</div>
+        <div class="eng-num">02</div>
+        <div class="eng-title">Campaign Launch</div>
+        <p class="eng-desc">Full-funnel campaign support from strategy through execution and reporting. Built for product launches, events, and demand gen pushes.</p>
+        <div class="eng-tag" style="color:var(--orange);border-color:rgba(224,77,34,0.3)">Best for Launch</div>
+      </div>
+      <div class="eng-card reveal rd2">
+        <div class="eng-num">03</div>
+        <div class="eng-title">Project-Based</div>
+        <p class="eng-desc">Video and graphics for a campaign, launch, or one-time need. Ideal if you need high-quality production without ongoing commitment.</p>
+        <div class="eng-tag">Flexible</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ CTA ══════════════ -->
+<section id="cta">
+  <div class="cta-inner">
+    <h2 class="section-h reveal">Let's build something<br>worth <em>talking about.</em></h2>
+    <div class="cta-right reveal rd1">
+      <p>Start with a strategy session — no obligation, no pitch. Just a real conversation about what's possible for your business.</p>
+      <div>
+        <a href="mailto:tyler@gaspessential.com" class="cta-email">tyler@gaspessential.com</a>
+      </div>
+      <div>
+        <a href="mailto:tyler@gaspessential.com" class="btn-fill" style="display:inline-flex;">
+          Book a Free Strategy Session
+          <svg class="arrow-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+      <p class="cta-note">GASP! Essential · B2B Creative Agency</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer>
+  <img src="GASP_LOGO_UPD_3_TRANSPARENT.png" alt="GASP! Essential">
+  <div class="footer-links">
+    <a href="#problem">The Problem</a>
+    <a href="#services">Services</a>
+    <a href="#platforms">Platforms</a>
+    <a href="#engage">Work With Us</a>
+  </div>
+  <small>© 2026 GASP! Essential. All rights reserved.</small>
+</footer>
+
+<script>
+  // ── Scroll reveals ──
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // ── Subtle parallax on hero headline ──
+  const heroBg = document.querySelector('.hero-main');
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    if (heroBg && y < window.innerHeight) {
+      heroBg.style.transform = `translateY(${y * 0.08}px)`;
+    }
+  }, { passive: true });
+</script>
+</body>
+</html>
