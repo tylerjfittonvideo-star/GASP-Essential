@@ -267,6 +267,16 @@
     .btn-fill:hover .arrow-icon,
     .btn-ghost:hover .arrow-icon { transform: translateX(4px); }
 
+    /* ── Hero logo large ── */
+    .hero-logo-large {
+      display: block;
+      width: clamp(260px, 38vw, 520px);
+      height: auto;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.15s ease forwards;
+    }
+
     /* ── Hero stats bar ── */
     .hero-stats {
       border-top: 1px solid var(--border-mid);
@@ -1076,6 +1086,8 @@
 <section id="hero">
   <div class="hero-main">
     <div class="hero-content">
+      <img src="GASP_LOGO_UPD_ORANGE_TRANSPARENT.png" alt="GASP! Essential" class="hero-logo-large">
+
       <div class="hero-kicker">B2B Creative Marketing Agency</div>
 
       <h1 class="hero-headline">
