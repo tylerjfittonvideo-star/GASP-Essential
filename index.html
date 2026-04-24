@@ -271,11 +271,13 @@
     /* ── Hero logo large ── */
     .hero-logo-large {
       display: block;
-      width: clamp(260px, 38vw, 520px);
+      width: clamp(380px, 58vw, 820px);
       height: auto;
-      margin-bottom: 2.5rem;
+      margin-bottom: 3.5rem;
+      margin-top: 1rem;
       opacity: 0;
       animation: fadeUp 0.7s 0.15s ease forwards;
+      filter: saturate(1.25);
     }
 
     /* ── Hero stats bar ── */
@@ -974,7 +976,7 @@
     .nav-mobile-cta { display: none; }
 
     @media (max-width: 1024px) {
-      .hero-logo-large { display: none; }
+      .hero-logo-large { width: clamp(240px, 52vw, 480px); margin-bottom: 2rem; }
       .about-grid      { grid-template-columns: 1fr; gap: 2.5rem; }
       .problem-header  { grid-template-columns: 1fr; gap: 1.5rem; }
       .problem-cards   { grid-template-columns: 1fr; }
@@ -1001,6 +1003,7 @@
     }
 
     @media (max-width: 640px) {
+      .hero-logo-large { display: none; }
       /* Nav */
       nav              { padding: env(safe-area-inset-top) 1.25rem 0 1.25rem; height: calc(60px + env(safe-area-inset-top)); }
 
