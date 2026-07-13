@@ -66,8 +66,10 @@
       display:flex; align-items:center; justify-content:space-between;
       padding:0 3rem;
     }
-    .nav-logo { height:38px; width:auto; display:flex; align-items:center; }
-    .nav-logo img { height:38px; width:auto; }
+    /* Logo art sits in a 2000px square with heavy transparent padding —
+       oversize the img and clip so the visible wordmark fills the bar */
+    .nav-logo { position:relative; overflow:hidden; height:64px; width:132px; display:block; flex-shrink:0; }
+    .nav-logo img { position:absolute; height:206px; width:206px; max-width:none; left:-38px; top:-57px; }
     .nav-links { display:flex; align-items:center; gap:2.5rem; }
     .nav-links a {
       font-family:'DM Sans',sans-serif; font-size:0.75rem; font-weight:400;
@@ -521,6 +523,8 @@
     }
 
     @media (max-width:640px) {
+      .nav-logo { width:110px; }
+      .nav-logo img { height:172px; width:172px; left:-32px; top:-42px; }
       .hero-logo { width:clamp(260px,88vw,480px); margin-bottom:2.5rem; }
       .hero-main { padding:2.5rem 1.25rem 3rem; }
       .hl-1 { font-size:clamp(3rem,14vw,5rem); }
