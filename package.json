@@ -1,0 +1,14 @@
+{
+  "name": "gasp-logo-update-project",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local screenshot tooling for the GASP! Essential site",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tylerjfittonvideo-star/GASP-Essential.git"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "puppeteer-core": "^25.3.0"
+  }
+}
