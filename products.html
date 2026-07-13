@@ -140,7 +140,7 @@
     section { position:relative; }
     .section-inner { padding:7rem 3rem; }
     .products-hero-inner { padding:9rem 3rem 6rem; }
-    .services-intro > *, .future-layout > * { min-width:0; }
+    .services-intro > * { min-width:0; }
     .section-rule { border:none; border-top:1px solid var(--border-mid); margin:0; }
 
     .section-label {
@@ -168,38 +168,43 @@
     .services-intro p { font-size:0.9rem; line-height:1.8; color:var(--warm-gray); max-width:360px; overflow-wrap:break-word; }
     .services-intro p strong { color:var(--ink); font-weight:500; }
 
-    /* ══ OUTPUT CARDS (mirrors problem-cards) ══ */
-    .problem-cards {
-      display:grid; grid-template-columns:repeat(3,1fr);
-      gap:1px; background:var(--border); border:1px solid var(--border);
+    /* ══ PRODUCT LIST (mirrors the home page services-rows ledger) ══ */
+    .services-rows { border:1px solid var(--border-mid); }
+    .svc-row {
+      display:grid; grid-template-columns:80px 220px 1fr;
+      gap:0; align-items:start;
+      border-bottom:1px solid var(--border-mid);
+      transition:background 0.25s;
+      cursor:default;
     }
-    .prob-card {
-      background:var(--paper-light); padding:2.5rem;
-      transition:background 0.3s; position:relative; overflow:hidden;
+    .svc-row:last-child { border-bottom:none; }
+    .svc-row:hover { background:var(--paper-mid); }
+    .svc-row-num {
+      padding:3rem 2rem; font-family:'Syne',sans-serif; font-weight:800;
+      font-size:0.68rem; letter-spacing:0.2em; color:var(--orange);
+      border-right:1px solid var(--border-mid);
     }
-    .prob-card::after {
-      content:''; position:absolute; top:0; left:0; right:0; height:2px;
-      background:var(--orange); transform:scaleX(0); transform-origin:left;
-      transition:transform 0.4s cubic-bezier(0.23,1,0.32,1);
+    .svc-row-title {
+      padding:3rem 2.5rem; font-family:'Syne',sans-serif; font-weight:700;
+      font-size:1.3rem; letter-spacing:-0.02em; line-height:1.15;
+      border-right:1px solid var(--border-mid);
     }
-    .prob-card:hover { background:var(--paper-mid); }
-    .prob-card:hover::after { transform:scaleX(1); }
-    .prob-icon {
-      width:40px; height:40px; border:1px solid var(--border-mid); border-radius:50%;
-      display:flex; align-items:center; justify-content:center;
-      margin-bottom:1.5rem; color:var(--orange);
+    .prod-status {
+      display:block;
+      font-family:'Syne',sans-serif; font-weight:700; font-size:0.65rem;
+      letter-spacing:0.15em; text-transform:uppercase; color:var(--orange);
+      margin-top:0.75rem;
     }
-    .prob-card h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:1rem; letter-spacing:-0.01em; margin-bottom:0.75rem; overflow-wrap:break-word; }
-    .prob-card p { font-size:0.83rem; line-height:1.75; color:var(--warm-gray); overflow-wrap:break-word; }
-
-    /* Input line above the cards */
-    .sc-input-row {
-      display:flex; align-items:center; gap:1.25rem;
-      margin-bottom:2.5rem; padding:1.5rem 2rem;
-      background:var(--ink); color:var(--paper);
+    .svc-row-body { padding:2.5rem 3rem; }
+    .svc-row-body p { font-size:0.83rem; line-height:1.8; color:var(--warm-gray); margin-bottom:1.5rem; overflow-wrap:break-word; }
+    .svc-row-body p strong { color:var(--ink); font-weight:500; }
+    .svc-items { list-style:none; display:flex; flex-direction:column; gap:0.4rem; }
+    .svc-items li {
+      font-size:0.8rem; color:var(--warm-gray); line-height:1.5;
+      display:flex; align-items:center; gap:0.5rem;
     }
-    .sc-input-num { font-family:'Syne',sans-serif; font-weight:800; font-size:2.2rem; letter-spacing:-0.03em; color:var(--orange); line-height:1; white-space:nowrap; }
-    .sc-input-label { font-size:0.78rem; line-height:1.6; color:var(--paper); opacity:0.8; text-transform:uppercase; letter-spacing:0.08em; }
+    .svc-items li::before { content:'→'; color:var(--orange); font-size:0.72rem; flex-shrink:0; }
+    .prod-cta { margin-top:1.75rem; }
 
     /* ══ FUTURE ══ */
     .future-layout {
@@ -208,7 +213,7 @@
     }
     .future-layout h2 { font-size:clamp(2.8rem,5vw,5.5rem); }
     .future-layout h2 .serif-italic { color:var(--orange); }
-    .future-layout p { font-size:0.9rem; line-height:1.8; color:var(--warm-gray); max-width:360px; overflow-wrap:break-word; margin-bottom:1.75rem; }
+    .future-layout p { font-size:0.9rem; line-height:1.8; color:var(--warm-gray); max-width:360px; overflow-wrap:break-word; }
 
     /* ══ CTA (full-bleed dark) ══ */
     #cta { background:var(--ink); }
@@ -263,7 +268,10 @@
       .nav-links { display:none; }
       .nav-mobile-cta { display:inline-flex; }
       .services-intro { grid-template-columns:1fr; gap:2rem; }
-      .problem-cards { grid-template-columns:1fr; }
+      .svc-row { grid-template-columns:60px 1fr; }
+      .svc-row-title { border-right:none; border-bottom:1px solid var(--border-mid); grid-column:2; padding-bottom:1.5rem; padding-top:1.5rem; }
+      .svc-row-num { padding:2rem 1.5rem; }
+      .svc-row-body { grid-column:2; padding:1.5rem 1.5rem 2rem; }
       .future-layout { grid-template-columns:1fr; gap:2rem; }
       .section-inner { padding:5rem 1.5rem; }
       .products-hero-inner { padding:7.5rem 1.5rem 4rem; }
@@ -277,6 +285,10 @@
       .products-hero-inner { padding:6.5rem 1.25rem 3.5rem; }
       .services-intro h1, .services-intro h2 { font-size:clamp(1.4rem,6vw,2.8rem); }
       .future-layout h2 { font-size:clamp(1.4rem,6vw,2.8rem); }
+      .svc-row { grid-template-columns:1fr; }
+      .svc-row-num { border-right:none; border-bottom:1px solid var(--border-mid); padding:1.5rem 1.5rem; }
+      .svc-row-title { grid-column:1; border-right:none; border-bottom:1px solid var(--border-mid); padding:1.5rem; }
+      .svc-row-body { grid-column:1; padding:1.5rem; }
       .cta-inner { padding:6rem 1.25rem; }
       .cta-headline { font-size:clamp(2rem,8vw,4rem); }
       footer { flex-direction:column; align-items:flex-start; gap:1.25rem; }
@@ -309,48 +321,63 @@
     <div class="section-label">Products</div>
     <div class="services-intro" style="margin-bottom:0;">
       <h1 class="section-h">What we<br><span class="serif-italic" style="color:var(--orange);">build.</span></h1>
-      <p>Tools built in-house at GASP! Essential, born from the same system we run for clients. <strong>When the process works, we productize it.</strong></p>
+      <p>Tools built in-house at GASP! Essential — and custom ones built for you. <strong>When the process works, we productize it. This store grows as it does.</strong></p>
     </div>
   </div>
 </section>
 
 <hr class="section-rule">
 
-<!-- ══ SOCIAL CUT ══ -->
-<section id="social-cut" style="background:var(--paper-light);">
+<!-- ══ PRODUCT LIST ══ -->
+<section id="product-list" style="background:var(--paper-light);">
   <div class="section-inner">
-    <div class="section-label reveal">Social Cut — First Up</div>
+    <div class="section-label reveal">The Lineup</div>
     <div class="services-intro">
-      <h2 class="section-h reveal">One video in.<br><span class="serif-italic" style="color:var(--orange);">A week of content out.</span></h2>
-      <p class="reveal rd1">Social Cut is the first product from GASP! Essential. Drop in one raw video — the podcast episode, the demo, the keynote — and get back a publish-ready content package, cut the way we'd cut it for a client channel.</p>
+      <h2 class="section-h reveal">Pick your<br><span class="serif-italic" style="color:var(--orange);">product.</span></h2>
+      <p class="reveal rd1">Every product here started as work we did by hand for clients. When a process proves itself, it earns a spot in the lineup — and if what you need doesn't exist yet, that's what the last row is for.</p>
     </div>
-
-    <div class="sc-input-row reveal">
-      <div class="sc-input-num">1×</div>
-      <div class="sc-input-label">raw video in — any length, any format.<br>Here's what comes back:</div>
-    </div>
-
-    <div class="problem-cards">
-      <div class="prob-card reveal">
-        <div class="prob-icon">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M12 8l4-2.5v7L12 10" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+    <div class="services-rows">
+      <div class="svc-row reveal">
+        <div class="svc-row-num">01</div>
+        <div class="svc-row-title">Social Cut
+          <span class="prod-status">Waitlist Open</span>
         </div>
-        <h3>Captioned Cuts in Every Aspect Ratio</h3>
-        <p>Vertical, square, and widescreen — sized for Reels, TikTok, LinkedIn, and YouTube, with captions burned in and ready to post.</p>
+        <div class="svc-row-body">
+          <p><strong>One video in. A week of content out.</strong> Drop in one raw video — the podcast episode, the demo, the keynote — and get back a publish-ready content package, cut the way we'd cut it for a client channel.</p>
+          <ul class="svc-items">
+            <li>Captioned cuts in every aspect ratio — Reels, TikTok, LinkedIn, YouTube</li>
+            <li>A designed, swipeable carousel built from the video's key points</li>
+            <li>Post copy and hooks written for each platform</li>
+          </ul>
+          <div class="prod-cta">
+            <!-- Temporary waitlist URL — swap back to https://socialcut.io once the domain is purchased -->
+            <a href="https://socialcut-site.tyler-fitton.workers.dev/" target="_blank" rel="noopener" class="btn-ghost">
+              Join the Social Cut Waitlist
+              <svg class="arrow-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3l4 4-4 4M3 7h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
       </div>
-      <div class="prob-card reveal rd1">
-        <div class="prob-icon">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="3" width="9" height="12" rx="1" stroke="currentColor" stroke-width="1.4"/><path d="M13 5h3M13 9h3M13 13h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <div class="svc-row reveal rd1">
+        <div class="svc-row-num">02</div>
+        <div class="svc-row-title">Custom Solutions
+          <span class="prod-status">By Conversation</span>
         </div>
-        <h3>A Designed Carousel</h3>
-        <p>The video's key points, rebuilt as a swipeable, branded post that works without sound — built for saves and shares.</p>
-      </div>
-      <div class="prob-card reveal rd2">
-        <div class="prob-icon">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 4h12M3 8h12M3 12h7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <div class="svc-row-body">
+          <p><strong>Have a product you wish existed?</strong> If there's a specific idea you want to bring to life — an internal tool, a content system, something your team keeps doing by hand — bring it to us. We'll scope it together and GASP! Essential develops it for you.</p>
+          <ul class="svc-items">
+            <li>Discovery call to define the idea and the outcome</li>
+            <li>Clear scope and proposal before any build starts</li>
+            <li>Design and development handled end to end</li>
+            <li>Launch, handoff, and ongoing support</li>
+          </ul>
+          <div class="prod-cta">
+            <a href="mailto:tyler.fitton@gaspessential.com?subject=Custom%20Solution%20Idea" class="btn-ghost">
+              Pitch Your Idea
+              <svg class="arrow-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3l4 4-4 4M3 7h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
         </div>
-        <h3>Post Copy, Ready to Publish</h3>
-        <p>Captions and hooks written for each platform — not one caption pasted across all of them.</p>
       </div>
     </div>
   </div>
@@ -361,22 +388,18 @@
   <div class="marquee-track">
   <div class="marquee-inner">
     <!-- two copies for seamless loop -->
+    <span class="marquee-item">Social Cut <span class="marquee-dot"></span></span>
     <span class="marquee-item">One Video In <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Captioned Cuts <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Every Aspect Ratio <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Designed Carousel <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Post Copy <span class="marquee-dot"></span></span>
     <span class="marquee-item">A Week of Content Out <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Custom Solutions <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Your Idea, Built <span class="marquee-dot"></span></span>
     <span class="marquee-item">Built by GASP! Essential <span class="marquee-dot"></span></span>
     <span class="marquee-item">Social Cut <span class="marquee-dot"></span></span>
     <span class="marquee-item">One Video In <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Captioned Cuts <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Every Aspect Ratio <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Designed Carousel <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Post Copy <span class="marquee-dot"></span></span>
     <span class="marquee-item">A Week of Content Out <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Custom Solutions <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Your Idea, Built <span class="marquee-dot"></span></span>
     <span class="marquee-item">Built by GASP! Essential <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Social Cut <span class="marquee-dot"></span></span>
   </div>
   </div>
 </div>
@@ -387,13 +410,7 @@
     <div class="section-label reveal">What's Next</div>
     <div class="future-layout">
       <h2 class="section-h reveal">More in the<br><span class="serif-italic">pipeline.</span></h2>
-      <div class="reveal rd1">
-        <p>Social Cut is the first product out of the GASP! Essential system. As more of our process earns its way into a tool, it'll show up here. Need the full-service version in the meantime?</p>
-        <a href="index.html#engage" class="btn-ghost">
-          Work With Us Directly
-          <svg class="arrow-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3l4 4-4 4M3 7h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-      </div>
+      <p class="reveal rd1">The lineup grows as more of our process earns its way into a tool. Check back — or tell us what should exist next.</p>
     </div>
   </div>
 </section>
@@ -401,17 +418,21 @@
 <!-- ══ CTA ══ -->
 <section id="cta">
   <div class="cta-inner">
-    <div class="cta-label">Join the Waitlist</div>
-    <h2 class="cta-headline reveal">Your next month of content is <em>one upload away.</em></h2>
-    <p class="cta-sub reveal rd1">Social Cut is currently in waitlist. Pricing, plans, and early access all live on the Social Cut site — this page just makes the introduction.</p>
-    <div class="reveal rd2">
+    <div class="cta-label">Start Something</div>
+    <h2 class="cta-headline reveal">Off the shelf, or <em>built to order.</em></h2>
+    <p class="cta-sub reveal rd1">Join the Social Cut waitlist, or bring us the product idea you want developed. Either way, it starts with one message.</p>
+    <div class="reveal rd2" style="display:flex; align-items:center; gap:2.5rem; flex-wrap:wrap; justify-content:center;">
       <!-- Temporary waitlist URL — swap back to https://socialcut.io once the domain is purchased -->
       <a href="https://socialcut-site.tyler-fitton.workers.dev/" target="_blank" rel="noopener" class="btn-fill" style="font-size:0.85rem;padding:1rem 2.2rem;">
         Join the Social Cut Waitlist
         <svg class="arrow-icon" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
+      <a href="mailto:tyler.fitton@gaspessential.com?subject=Custom%20Solution%20Idea" class="btn-ghost" style="color:var(--paper); border-color:rgba(245,244,242,0.3);">
+        Pitch a Custom Solution
+        <svg class="arrow-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3l4 4-4 4M3 7h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
     </div>
-    <p class="cta-note reveal rd3">Social Cut · Built by GASP! Essential</p>
+    <p class="cta-note reveal rd3">Products · Built by GASP! Essential</p>
   </div>
 </section>
 
