@@ -1,16 +1,15 @@
 ---
 name: scrape-ladder
 description: >-
-  Self-hosted web scraping at the lowest cost that works and the highest speed that is polite: a
-  failure-driven ladder from cache → direct HTTP with a real-Chrome TLS fingerprint → your own headless browser →
-  free renderers (Jina, Cloudflare markdown) → your own proxy list, with an optional, off-by-default external
-  API rung (Decodo-compatible), JSON-LD / hydration-state / CSS-schema extraction before any LLM touches the page,
-  and `serve`, which exposes all of it as your own Decodo-shaped API on localhost. Use this whenever the user wants to
-  scrape, crawl, fetch, pull, harvest, monitor, or extract anything from URLs or whole sites — product lists,
-  prices, articles, directories, job posts, contact pages, docs — or asks "how much would scraping X cost",
-  "this site blocks me", "turn this site into JSON/markdown", "run this scrape every morning", or mentions
-  Decodo, proxies, Cloudflare, headless browsers, or LLM-ready markdown, even without saying "scrape".
-  Supersedes scrape-anything for live URLs (keep scrape-anything's `file` mode for PDFs/Office files).
+  Self-hosted web scraping at the lowest cost that works and the highest speed that is polite: a failure-driven
+  ladder from cache → direct HTTP with a real-Chrome TLS fingerprint → your own headless browser → free renderers
+  (Jina, Cloudflare markdown) → your own proxy list, with an optional off-by-default external API rung, JSON-LD /
+  hydration-state / CSS-schema extraction before any LLM touches the page, and `serve`, your own Decodo-shaped API
+  on localhost. Use whenever the user wants to scrape, crawl, fetch, pull, harvest, monitor, or extract anything
+  from URLs or whole sites (products, prices, articles, directories, job posts, contact pages, docs), asks "how
+  much would scraping X cost", "this site blocks me", "turn this site into JSON/markdown", "run this scrape every
+  morning", or mentions Decodo, proxies, Cloudflare, headless browsers, or LLM-ready markdown, even without saying
+  "scrape". Supersedes scrape-anything for live URLs (keep its `file` mode for PDFs/Office files).
 ---
 
 # scrape-ladder
