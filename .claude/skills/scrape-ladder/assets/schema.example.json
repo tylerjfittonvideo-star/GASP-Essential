@@ -1,0 +1,10 @@
+{
+  "name": "Quotes",
+  "baseSelector": "div.quote",
+  "fields": [
+    { "name": "quote",  "selector": "span.text",   "type": "text" },
+    { "name": "author", "selector": "small.author", "type": "text" },
+    { "name": "author_url", "selector": "span a", "type": "attribute", "attribute": "href", "absolute": true },
+    { "name": "tags",   "selector": "a.tag",       "type": "list" }
+  ]
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- macOS launchd job: copy to ~/Library/LaunchAgents/ then `launchctl load ~/Library/LaunchAgents/com.gaspessential.scrape-ladder.plist`.
+     Runs daily at 06:10 local time with no Claude in the loop. Edit the paths and the job file. -->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.gaspessential.scrape-ladder</string>
+  <key>ProgramArguments</key><array>
+    <string>/usr/bin/env</string><string>python3</string>
+    <string>/Users/YOU/.claude/skills/scrape-ladder/scripts/ladder.py</string>
+    <string>job</string><string>/Users/YOU/scrape-jobs/example.json</string>
+  </array>
+  <key>EnvironmentVariables</key><dict>
+    <key>PATH</key><string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+    <key>LADDER_HOME</key><string>/Users/YOU/.scrape-ladder</string>
+    <!-- Put DECODO_AUTH_TOKEN etc. here only if the job needs paid tiers; otherwise leave them out. -->
+  </dict>
+  <key>StartCalendarInterval</key><dict><key>Hour</key><integer>6</integer><key>Minute</key><integer>10</integer></dict>
+  <key>StandardOutPath</key><string>/Users/YOU/scrape-jobs/logs/ladder.out.log</string>
+  <key>StandardErrorPath</key><string>/Users/YOU/scrape-jobs/logs/ladder.err.log</string>
+  <key>RunAtLoad</key><false/>
+</dict></plist>
