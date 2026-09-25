@@ -1,0 +1,47 @@
+# Copy to .github/workflows/scrape.yml in any repo. Runs the ladder with NO Claude in the loop.
+# Facts that bite (verified 2026-09): cron is UTC, minimum 5 min, fires late by 10–30 min at busy hours,
+# and GitHub disables schedules after 60 days without a commit on the repo. Free tier: 2,000 min/month on
+# private repos, unlimited on public. Put secrets in Settings → Secrets → Actions.
+name: scrape-ladder job
+on:
+  schedule:
+    - cron: "17 11 * * 1-5"      # 11:17 UTC weekdays (avoid :00 — that is when everyone else runs)
+  workflow_dispatch:
+    inputs:
+      budget:
+        description: "USD allowed for paid tiers this run"
+        default: "0"
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      DECODO_AUTH_TOKEN: ${{ secrets.DECODO_AUTH_TOKEN }}     # paid tier; only used when budget > 0
+      DECODO_PROXY_USER: ${{ secrets.DECODO_PROXY_USER }}     # optional proxy tier
+      DECODO_PROXY_PASS: ${{ secrets.DECODO_PROXY_PASS }}
+      JINA_API_KEY: ${{ secrets.JINA_API_KEY }}               # optional, free key = 500 rpm
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}     # only if the job has an "extract" step
+      LADDER_HOME: ${{ github.workspace }}/.ladder-state
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: "pip" }
+      - name: Restore ledger + page cache (conditional GETs and 304s make reruns nearly free)
+        uses: actions/cache@v4
+        with:
+          path: .ladder-state
+          key: ladder-state-${{ github.run_id }}
+          restore-keys: ladder-state-
+      - name: Install core stack (no browser download — jina covers JS pages in CI)
+        run: bash .claude/skills/scrape-ladder/scripts/setup.sh
+      - name: Run job
+        run: |
+          python .claude/skills/scrape-ladder/scripts/ladder.py job jobs/example.json \
+            --budget "${{ github.event.inputs.budget || '0' }}"
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with: { name: scrape-results, path: out/, retention-days: 14 }
+      # Or commit results back (uncomment) — this also keeps the 60-day inactivity timer alive:
+      # - run: |
+      #     git config user.name "scrape-bot" && git config user.email "bot@users.noreply.github.com"
+      #     git add out/ && git commit -m "scrape: $(date -u +%F)" || echo "no changes" && git push

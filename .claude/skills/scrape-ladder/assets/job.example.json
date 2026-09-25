@@ -1,0 +1,22 @@
+{
+  "name": "example-docs-crawl",
+  "discover": { "domain": "quotes.toscrape.com", "pattern": "*", "since": null, "limit": 200, "feeds": false },
+  "seeds": ["https://quotes.toscrape.com/"],
+  "batch": {
+    "want": "json",
+    "need": null,
+    "js": false,
+    "budget": 0,
+    "concurrency": 16,
+    "per_host": 4,
+    "host_interval": 0.25,
+    "ttl": 86400,
+    "max_tier": "api",
+    "links": false
+  },
+  "out": "out/example.jsonl",
+  "dump_dir": null,
+  "select_schema": "assets/schema.example.json",
+  "extract": null,
+  "_extract_example": { "fields": "quote,author", "model": "claude-haiku-4-5", "batch": true, "max_usd": 0.50 }
+}
