@@ -2,11 +2,12 @@
 """
 scrape-ladder engine — fetch the web at the lowest cost that works.
 
-  cache → direct (curl_cffi, real-browser TLS) → browser (local headless) → jina (free renderer)
-        → proxy (rotating residential/DC) → api (Decodo Web Scraping API, or any GET-style API)
+  cache → direct (curl_cffi, real-browser TLS) → browser (your local headless Chrome) → jina (free renderer)
+        → proxy (your own proxy list, rotated) → api (optional plug-in: Decodo-compatible or any GET-style API)
 
 Escalation is driven by *why* a fetch failed (JS shell, IP block, WAF vendor, 429).
-Paid tiers stay OFF unless --budget is given. Every request is priced and ledgered.
+Everything up to `proxy` is self-hosted and free. The `api` rung stays OFF unless --budget is given.
+`serve` exposes the whole ladder as your own Decodo-shaped API on localhost. Every request is ledgered.
 
 Commands
   fetch     URL                 one page → md | json | html | text
@@ -15,6 +16,7 @@ Commands
   probe     URL                 what protects it, is JS needed, hidden JSON, est. $/1K
   select    URL|FILE --schema   CSS/attribute schema → JSON rows, no LLM
   job       JOB.json            discover → batch → (optional) LLM extract, unattended
+  serve     [--port 8787]       your own scrape API: POST /v2/scrape, /v2/task, /v2/task/batch (Decodo-shaped)
   cost      [--pages N --tier T | --sheet]
   ledger    [--stats | --host H | --clear-host H | --purge-days N]
 
@@ -765,7 +767,36 @@ def _proxy_kw(proxy):
     return {"proxies": {"http": proxy, "https": proxy}} if proxy else {}
 
 
-async def direct_many(urls, opts, ledger, *, proxy=None, tier="direct"):
+_PROXY_HEALTH = {}  # proxy url -> (failures, last_failure_ts)
+
+
+def load_proxy_pool(spec):
+    """A proxy spec is a single URL, or a path to a file with one proxy URL per line (your own machines,
+    any per-GB provider, a mix). Lines starting with # are ignored. Returns a list."""
+    if not spec:
+        return []
+    if os.path.exists(spec):
+        with open(spec, "r", encoding="utf-8") as f:
+            pool = [l.strip() for l in f if l.strip() and not l.startswith("#")]
+        return [u if "://" in u else "http://" + u for u in pool]
+    return [spec]
+
+
+def pick_proxy(pool):
+    import random
+    now = time.time()
+    healthy = [u for u in pool if not (_PROXY_HEALTH.get(u, (0, 0))[0] >= 3 and now - _PROXY_HEALTH.get(u, (0, 0))[1] < 600)]
+    return random.choice(healthy or pool) if pool else None
+
+
+def proxy_result(proxy, ok):
+    if not proxy:
+        return
+    f, _ = _PROXY_HEALTH.get(proxy, (0, 0))
+    _PROXY_HEALTH[proxy] = (0, 0) if ok else (f + 1, time.time())
+
+
+async def direct_many(urls, opts, ledger, *, proxy=None, tier="direct", proxy_pool=None):
     out = {}
     sem = asyncio.Semaphore(opts.concurrency)
     pol = Politeness(opts.host_interval, opts.per_host)
@@ -777,17 +808,19 @@ async def direct_many(urls, opts, ledger, *, proxy=None, tier="direct"):
             hdrs = _headers(accept_md, {**opts.extra_headers, **cond})
             if opts.cookie:
                 hdrs["Cookie"] = opts.cookie
+            px = pick_proxy(proxy_pool) if proxy_pool else proxy
             async with sem, pol.sems[host]:
                 await pol.wait(host)
                 t0 = time.monotonic()
                 try:
-                    r = await s.get(u, headers=hdrs, timeout=opts.timeout, allow_redirects=True, **_proxy_kw(proxy))
+                    r = await s.get(u, headers=hdrs, timeout=opts.timeout, allow_redirects=True, **_proxy_kw(px))
                     p = _page_from_response(u, r, tier)
                 except Exception as e:
                     p = Page(url=u, tier=tier, verdict=f"error:{type(e).__name__}", notes=[str(e)[:200]])
                 p.elapsed_ms = int((time.monotonic() - t0) * 1000)
-                if proxy:
+                if px:
                     p.cost_usd = (len(p.body) + 2048) / 1e9 * PRICES["proxy_usd_per_gb"]
+                    p.notes.append("proxy=" + re.sub(r"//[^@]*@", "//***@", px)[:60])
                 if p.status == 304:
                     cached = ledger.load_page(u) if ledger else None
                     if cached:
@@ -800,6 +833,8 @@ async def direct_many(urls, opts, ledger, *, proxy=None, tier="direct"):
                     p.verdict = classify(p, opts.need)
                 if p.verdict == "rate_limited":
                     pol.backoff(host)
+                if px:
+                    proxy_result(px, p.verdict == "ok" or p.verdict in ("not_found", "not_modified"))
                 out[u] = p
         await asyncio.gather(*(one(u) for u in urls))
     return out
@@ -1289,7 +1324,10 @@ class Opts:
                 k, v = hv.split(":", 1)
                 self.extra_headers[k.strip()] = v.strip()
         self.cookie = g("cookie")
-        self.proxy = g("proxy") or proxy_url_from_env(self.geo, self.session)
+        self.proxy_pool = load_proxy_pool(g("proxy") or os.environ.get("LADDER_PROXY_LIST") or "")
+        self.proxy = (self.proxy_pool[0] if len(self.proxy_pool) == 1 else None) or proxy_url_from_env(self.geo, self.session)
+        if len(self.proxy_pool) <= 1:
+            self.proxy_pool = []
         self.out = g("out")
         self.dump_dir = g("dump_dir")
         self.schema_obj = None
@@ -1308,7 +1346,7 @@ def tier_available(tier, opts, budget):
     if tier == "jina":
         return (not opts.no_jina, "disabled (--no-jina)")
     if tier == "proxy":
-        return (bool(opts.proxy), "no proxy configured (LADDER_PROXY_URL or DECODO_PROXY_USER/PASS)")
+        return (bool(opts.proxy or opts.proxy_pool), "no proxy configured (LADDER_PROXY_LIST file, LADDER_PROXY_URL, or --proxy)")
     if tier == "api":
         if not api_available():
             return (False, "no API credentials (DECODO_AUTH_TOKEN)")
@@ -1397,7 +1435,7 @@ def escalate(urls, opts, ledger, budget):
         elif tier == "jina":
             res = asyncio.run(jina_many(sel, opts))
         elif tier == "proxy":
-            res = asyncio.run(direct_many(sel, opts, ledger, proxy=opts.proxy, tier="proxy"))
+            res = asyncio.run(direct_many(sel, opts, ledger, proxy=opts.proxy, tier="proxy", proxy_pool=opts.proxy_pool or None))
         elif tier == "api":
             if decodo_token():
                 res = asyncio.run(decodo_many(sel, opts, budget, ledger, js_for=js_for, premium_for=premium_for))
@@ -2097,6 +2135,171 @@ def cmd_job(a):
     log(f"[{name}] done: {ok}/{len(results)} ok")
 
 
+
+# ----------------------------------------------------------------------------- self-hosted API (serve)
+
+def _serve_opts(body, defaults):
+    """Map a Decodo-style request body onto ladder options. Accepted keys: url, headless ("html"), markdown (bool),
+    want (md|json|html|text), need/wait_selector, geo, locale, session_id, no_cache, ttl, min_tier, max_tier, budget."""
+    ns = argparse.Namespace(**defaults)
+    want = body.get("want") or ("md" if body.get("markdown") else "html")
+    ns.want = want if want in ("md", "json", "html", "text") else "html"
+    ns.need = body.get("need") or body.get("wait_selector")
+    ns.geo = body.get("geo") or defaults.get("geo")
+    ns.locale = body.get("locale") or defaults.get("locale")
+    ns.session = body.get("session_id")
+    ns.refresh = bool(body.get("no_cache") or body.get("refresh"))
+    ns.ttl = int(body.get("ttl") or defaults.get("ttl") or 86400)
+    ns.js = bool(body.get("headless")) or bool(body.get("js"))
+    if body.get("min_tier") in TIER_ORDER:
+        ns.min_tier = body["min_tier"]
+    elif ns.js:
+        ns.min_tier = "browser"
+    if body.get("max_tier") in TIER_ORDER:
+        ns.max_tier = body["max_tier"]
+    if body.get("budget") is not None:
+        ns.budget = min(float(body["budget"]), float(defaults.get("budget") or 0))  # a client can never raise the server's cap
+    return Opts(ns)
+
+
+def _scrape_for_serve(url, body, defaults):
+    opts = _serve_opts(body, defaults)
+    ledger = Ledger()
+    budget = Budget(opts.budget)
+    results, _ = escalate([url], opts, ledger, budget)
+    p = results[url]
+    rec = build_record(p, opts)
+    if opts.want == "json":
+        content = {k: rec.get(k) for k in ("title", "markdown", "structured", "links", "rows", "chars") if k in rec}
+    elif opts.want == "html":
+        content = rec.get("html") or ""
+    else:
+        content = rec.get("markdown") or rec.get("text") or ""
+    return {"content": content, "status_code": p.status or (200 if p.verdict == "ok" else 0), "url": p.final_url or url,
+            "verdict": p.verdict, "tier": p.tier, "cost_usd": round(p.cost_usd, 6), "elapsed_ms": p.elapsed_ms,
+            "cache_hit": p.cache_hit, "task_id": sha1(url + str(time.time()))[:16], "created_at": iso(), "notes": p.notes[:5]}
+
+
+def cmd_serve(a):
+    """Your own scraping API: POST /v2/scrape {url, headless, markdown, geo, ...} → {"results":[{content, status_code, url, ...}]}.
+    Also POST /v2/task (async single), POST /v2/task/batch {url:[...]} → id; GET /v2/task/{id} and /v2/task/{id}/results;
+    GET /health, GET /ledger. Same shape as Decodo's API so existing callers can point at localhost instead."""
+    import threading
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+    token = a.token or os.environ.get("LADDER_SERVE_TOKEN")
+    if a.host not in ("127.0.0.1", "localhost", "::1") and not token:
+        raise SystemExit("refusing to listen on a non-loopback address without --token (or LADDER_SERVE_TOKEN)")
+    defaults = dict(want="html", budget=a.budget, concurrency=a.concurrency, per_host=a.per_host, host_interval=a.host_interval,
+                    timeout=a.timeout, ttl=a.ttl, max_tier=a.max_tier, min_tier="cache", no_jina=a.no_jina,
+                    ignore_robots=a.ignore_robots, browser_concurrency=a.browser_concurrency, api_rps=a.api_rps,
+                    api_pool="standard", md_mode="clean", geo=a.geo, locale=a.locale, proxy=a.proxy)
+    jobs = {}
+    lock = threading.Lock()
+
+    def run_task(job_id, urls, body):
+        try:
+            if len(urls) == 1:
+                res = [_scrape_for_serve(urls[0], body, defaults)]
+            else:
+                opts = _serve_opts(body, defaults)
+                ledger = Ledger()
+                budget = Budget(opts.budget)
+                results, _ = escalate(urls, opts, ledger, budget)
+                res = []
+                for u in urls:
+                    p = results[u]
+                    rec = build_record(p, opts)
+                    content = rec.get("markdown") if opts.want in ("md", "text") else (rec.get("html") if opts.want == "html" else rec)
+                    res.append({"content": content if content is not None else "", "status_code": p.status, "url": p.final_url or u,
+                                "verdict": p.verdict, "tier": p.tier, "cost_usd": round(p.cost_usd, 6), "elapsed_ms": p.elapsed_ms})
+            with lock:
+                jobs[job_id].update(status="done", results=res, finished_at=iso())
+        except Exception as e:
+            with lock:
+                jobs[job_id].update(status="faulted", error=f"{type(e).__name__}: {str(e)[:300]}", finished_at=iso())
+
+    class Handler(BaseHTTPRequestHandler):
+        def _ok(self):
+            if not token:
+                return True
+            h = self.headers.get("Authorization", "")
+            return h in (f"Basic {token}", f"Bearer {token}")
+
+        def _send(self, code, obj):
+            data = json.dumps(obj, ensure_ascii=False).encode("utf-8")
+            self.send_response(code)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+
+        def _body(self):
+            n = int(self.headers.get("Content-Length") or 0)
+            raw = self.rfile.read(n) if n else b"{}"
+            try:
+                return json.loads(raw or b"{}")
+            except Exception:
+                return None
+
+        def log_message(self, fmt, *args):
+            log(f"serve {self.address_string()} {fmt % args}", "debug")
+
+        def do_GET(self):
+            if not self._ok():
+                return self._send(401, {"error": "unauthorized"})
+            path = self.path.split("?")[0].rstrip("/")
+            if path == "/health":
+                avail = {t: tier_available(t, Opts(argparse.Namespace(**defaults)), Budget(defaults["budget"]))[0] for t in TIER_ORDER if t != "cache"}
+                return self._send(200, {"ok": True, "version": VERSION, "tiers": avail, "budget_per_request": defaults["budget"]})
+            if path == "/ledger":
+                return self._send(200, Ledger().stats())
+            m = re.match(r"^/v[23]/task/([A-Za-z0-9]+)(/results)?$", path)
+            if m:
+                with lock:
+                    j = dict(jobs.get(m.group(1)) or {})
+                if not j:
+                    return self._send(404, {"error": "unknown task"})
+                if m.group(2):
+                    return self._send(200 if j["status"] == "done" else 202, {"id": m.group(1), "status": j["status"], "results": j.get("results", []), "error": j.get("error")})
+                return self._send(200, {k: v for k, v in j.items() if k != "results"})
+            return self._send(404, {"error": "no such route", "routes": ["/health", "/ledger", "/v2/scrape", "/v2/task", "/v2/task/batch", "/v2/task/{id}", "/v2/task/{id}/results"]})
+
+        def do_POST(self):
+            if not self._ok():
+                return self._send(401, {"error": "unauthorized"})
+            path = self.path.split("?")[0].rstrip("/")
+            body = self._body()
+            if body is None:
+                return self._send(400, {"error": "invalid JSON body"})
+            if path in ("/v2/scrape", "/scrape"):
+                url = normalize_url(body.get("url") or "")
+                if not url:
+                    return self._send(400, {"error": "url required"})
+                res = _scrape_for_serve(url, body, defaults)
+                return self._send(200, {"results": [res]})
+            if path in ("/v2/task", "/v3/task", "/v2/task/batch", "/v3/task/batch", "/batch"):
+                raw = body.get("url") or body.get("urls") or []
+                urls = [normalize_url(u) for u in (raw if isinstance(raw, list) else [raw])]
+                urls = [u for u in dict.fromkeys(urls) if u]
+                if not urls:
+                    return self._send(400, {"error": "url (string or list) required"})
+                if len(urls) > a.max_batch:
+                    return self._send(413, {"error": f"max {a.max_batch} urls per task"})
+                job_id = sha1(json.dumps(urls) + str(time.time()))[:16]
+                with lock:
+                    jobs[job_id] = {"id": job_id, "status": "pending", "count": len(urls), "created_at": iso()}
+                threading.Thread(target=run_task, args=(job_id, urls, body), daemon=True).start()
+                return self._send(202, {"id": job_id, "status": "pending", "count": len(urls), "poll": f"/v2/task/{job_id}"})
+            return self._send(404, {"error": "no such route"})
+
+    srv = ThreadingHTTPServer((a.host, a.port), Handler)
+    log(f"serving your own scrape API on http://{a.host}:{a.port}  auth={'token' if token else 'none (loopback only)'}  budget/request=${a.budget:.2f}  max_tier={a.max_tier}")
+    try:
+        srv.serve_forever()
+    except KeyboardInterrupt:
+        pass
+
+
 # ----------------------------------------------------------------------------- cli
 
 def add_fetch_flags(p, batch=False):
@@ -2135,7 +2338,7 @@ def add_fetch_flags(p, batch=False):
     p.add_argument("--api-html", action="store_true", help="ask the API for HTML even when --want md")
     p.add_argument("--header", action="append", help="extra request header 'Name: value' (repeatable)")
     p.add_argument("--cookie", help="Cookie header value (e.g. consent cookies)")
-    p.add_argument("--proxy", help="proxy URL for the proxy tier (overrides env)")
+    p.add_argument("--proxy", help="proxy URL, or a file with one proxy URL per line to rotate through (your own machines or any provider)")
 
 
 def main():
@@ -2196,6 +2399,26 @@ def main():
     c.add_argument("--tier")
     c.add_argument("--page-kb", type=int, default=500, help="avg page size for bandwidth-priced tiers")
 
+    sv = sub.add_parser("serve", help="run your own scrape API (Decodo-compatible request/response) on localhost")
+    sv.add_argument("--host", default="127.0.0.1")
+    sv.add_argument("--port", type=int, default=8787)
+    sv.add_argument("--token", help="require Authorization: Bearer/Basic <token> (mandatory off-loopback)")
+    sv.add_argument("--budget", type=float, default=0.0, help="max USD of paid rungs per request (default 0 = self-hosted rungs only)")
+    sv.add_argument("--max-tier", choices=TIER_ORDER, default="proxy", help="default proxy: never call an external API")
+    sv.add_argument("--max-batch", type=int, default=500)
+    sv.add_argument("--concurrency", type=int, default=8)
+    sv.add_argument("--per-host", type=int, default=4)
+    sv.add_argument("--host-interval", type=float, default=0.25)
+    sv.add_argument("--timeout", type=int, default=25)
+    sv.add_argument("--ttl", type=int, default=3600)
+    sv.add_argument("--browser-concurrency", type=int, default=4)
+    sv.add_argument("--api-rps", type=float, default=5)
+    sv.add_argument("--no-jina", action="store_true")
+    sv.add_argument("--ignore-robots", action="store_true")
+    sv.add_argument("--geo")
+    sv.add_argument("--locale")
+    sv.add_argument("--proxy", help="proxy URL or a file with one proxy per line (rotated)")
+
     l = sub.add_parser("ledger", help="cache/spend stats and per-host memory")
     l.add_argument("--host")
     l.add_argument("--clear-host")
@@ -2204,7 +2427,7 @@ def main():
     a = ap.parse_args()
     QUIET, VERBOSE = a.quiet, a.verbose
     {"fetch": cmd_fetch, "batch": cmd_batch, "discover": cmd_discover, "probe": cmd_probe, "select": cmd_select,
-     "job": cmd_job, "cost": cmd_cost, "ledger": cmd_ledger}[a.cmd](a)
+     "job": cmd_job, "cost": cmd_cost, "ledger": cmd_ledger, "serve": cmd_serve}[a.cmd](a)
 
 
 if __name__ == "__main__":
