@@ -1,505 +1,74 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Products — GASP! Essential</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
-  <script>
-    const params = new URLSearchParams(location.search);
-    if (params.get('preview') === '1') document.documentElement.classList.add('no-anim');
-    const scrollTo = params.get('scrollto');
-    if (scrollTo) window.addEventListener('load', () => { const el = document.getElementById(scrollTo); if (el) el.scrollIntoView(); });
-  </script>
-  <style>
-    .no-anim *, .no-anim *::before, .no-anim *::after { animation-duration:0.001ms!important; animation-delay:0s!important; transition-duration:0.001ms!important; }
-    .no-anim .reveal { opacity:1!important; transform:none!important; }
-    .no-anim .marquee-inner { animation:none!important; }
-
-    :root {
-      --paper:       #F5F4F2;
-      --paper-light: #FAFAF8;
-      --paper-mid:   #EEEDE9;
-      --paper-dark:  #E4E3DF;
-      --ink:         #1A1410;
-      --ink-mid:     #3A3028;
-      --orange:      #FF533E;
-      --orange-soft: rgba(255,83,62,0.10);
-      --orange-line: rgba(255,83,62,0.25);
-      --warm-gray:   #7C7874;
-      --border:      rgba(26,20,16,0.10);
-      --border-mid:  rgba(26,20,16,0.18);
-    }
-
-    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-    html { scroll-behavior:smooth; overflow-x:hidden; max-width:100vw; }
-
-    body {
-      background: var(--paper);
-      color: var(--ink);
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 300;
-      overflow-x: hidden;
-      max-width:100vw;
-    }
-
-    /* Paper grain */
-    body::before {
-      content:'';
-      position:fixed; inset:0;
-      pointer-events:none; z-index:9999;
-      opacity:0.10;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='1'/%3E%3C/svg%3E");
-      background-size:200px;
-    }
-
-    /* ══ NAV ══ */
-    nav {
-      position:fixed; top:0; left:0; right:0; z-index:100;
-      background:rgba(245,244,242,0.90);
-      backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
-      border-bottom:1px solid var(--border);
-      height:64px;
-      display:flex; align-items:center; justify-content:space-between;
-      padding:0 3rem;
-    }
-    /* Logo art sits in a 2000px square with heavy transparent padding —
-       oversize the img and clip so the visible wordmark fills the bar */
-    .nav-logo { position:relative; overflow:hidden; height:64px; width:132px; display:block; flex-shrink:0; }
-    .nav-logo img { position:absolute; height:206px; width:206px; max-width:none; left:-38px; top:-57px; }
-    .nav-links { display:flex; align-items:center; gap:2.5rem; }
-    .nav-links a {
-      font-family:'DM Sans',sans-serif; font-size:0.75rem; font-weight:400;
-      letter-spacing:0.09em; text-transform:uppercase;
-      color:var(--warm-gray); text-decoration:none;
-      transition:color 0.2s;
-    }
-    .nav-links a:hover { color:var(--ink); }
-    .nav-btn {
-      background:var(--orange)!important; color:#fff!important;
-      font-family:'Syne',sans-serif; font-weight:700; font-size:0.72rem;
-      letter-spacing:0.09em; text-transform:uppercase;
-      text-decoration:none; padding:0.55rem 1.4rem;
-      border-radius:2px;
-      transition:background 0.2s, transform 0.15s;
-    }
-    .nav-btn:hover { background:var(--ink)!important; transform:translateY(-1px); }
-    .nav-mobile-cta { display:none; }
-
-    /* Buttons */
-    .btn-fill {
-      display:inline-flex; align-items:center; gap:0.5rem;
-      background:var(--orange); color:#fff;
-      font-family:'Syne',sans-serif; font-weight:700;
-      font-size:0.8rem; letter-spacing:0.08em; text-transform:uppercase;
-      text-decoration:none; padding:0.9rem 1.8rem;
-      border-radius:2px;
-      transition:transform 0.2s, box-shadow 0.2s;
-      box-shadow:0 4px 24px rgba(255,83,62,0.22);
-    }
-    .btn-fill:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(255,83,62,0.3); }
-    .btn-ghost {
-      display:inline-flex; align-items:center; gap:0.5rem;
-      background:transparent; color:var(--ink);
-      font-family:'Syne',sans-serif; font-weight:600;
-      font-size:0.8rem; letter-spacing:0.08em; text-transform:uppercase;
-      text-decoration:none; padding:0.9rem 0;
-      border-bottom:1.5px solid var(--border-mid);
-      transition:border-color 0.2s, color 0.2s;
-    }
-    .btn-ghost:hover { border-color:var(--orange); color:var(--orange); }
-    .arrow-icon { transition:transform 0.25s ease; }
-    .btn-fill:hover .arrow-icon, .btn-ghost:hover .arrow-icon { transform:translateX(4px); }
-
-    /* ══ MARQUEE TICKER ══ */
-    .marquee-band {
-      background:var(--orange);
-      padding:0.9rem 0;
-      border-top:none; border-bottom:none;
-    }
-    .marquee-track {
-      width:100%; overflow:hidden; white-space:nowrap;
-    }
-    .marquee-inner {
-      display:inline-flex; gap:0;
-      animation:marquee 28s linear infinite;
-    }
-    .marquee-item {
-      display:inline-flex; align-items:center; gap:2rem;
-      padding:0 3rem;
-      font-family:'Syne',sans-serif; font-weight:700;
-      font-size:0.72rem; letter-spacing:0.16em; text-transform:uppercase;
-      color:#fff;
-    }
-    .marquee-dot { width:4px; height:4px; border-radius:50%; background:rgba(255,255,255,0.5); flex-shrink:0; }
-    @keyframes marquee { from { transform:translateX(0); } to { transform:translateX(-50%); } }
-
-    /* ══ SECTION SCAFFOLDING ══ */
-    section { position:relative; }
-    .section-inner { padding:7rem 3rem; }
-    .products-hero-inner { padding:9rem 3rem 6rem; }
-    .services-intro > * { min-width:0; }
-    .section-rule { border:none; border-top:1px solid var(--border-mid); margin:0; }
-
-    .section-label {
-      display:inline-flex; align-items:center; gap:0.7rem;
-      font-size:0.68rem; font-weight:400; letter-spacing:0.2em;
-      text-transform:uppercase; color:var(--orange);
-      margin-bottom:3.5rem;
-    }
-    .section-label::before { content:''; display:block; width:22px; height:1px; background:var(--orange); }
-
-    .section-h {
-      font-family:'Syne',sans-serif; font-weight:800;
-      letter-spacing:-0.03em; line-height:0.93;
-      overflow-wrap:break-word; word-break:break-word;
-    }
-
-    .serif-italic { font-family:'Instrument Serif',serif; font-style:italic; font-weight:400; }
-
-    /* Intro grid (mirrors services-intro on the home page) */
-    .services-intro {
-      display:grid; grid-template-columns:1fr 1fr; gap:5rem;
-      align-items:end; margin-bottom:5rem;
-    }
-    .services-intro h1, .services-intro h2 { font-size:clamp(2.8rem,5vw,5.5rem); }
-    .services-intro p { font-size:0.9rem; line-height:1.8; color:var(--warm-gray); max-width:360px; overflow-wrap:break-word; }
-    .services-intro p strong { color:var(--ink); font-weight:500; }
-
-    /* ══ PRODUCT LIST (mirrors the home page services-rows ledger) ══ */
-    .services-rows { border:1px solid var(--border-mid); }
-    .svc-row {
-      display:grid; grid-template-columns:80px 220px 1fr 340px;
-      gap:0; align-items:start;
-      border-bottom:1px solid var(--border-mid);
-      transition:background 0.25s;
-      cursor:default;
-    }
-    .svc-row:last-child { border-bottom:none; }
-    .svc-row:hover { background:var(--paper-mid); }
-    .svc-row-num {
-      padding:3rem 2rem; font-family:'Syne',sans-serif; font-weight:800;
-      font-size:0.68rem; letter-spacing:0.2em; color:var(--orange);
-      border-right:1px solid var(--border-mid);
-    }
-    .svc-row-title {
-      padding:3rem 2.5rem; font-family:'Syne',sans-serif; font-weight:700;
-      font-size:1.3rem; letter-spacing:-0.02em; line-height:1.15;
-      border-right:1px solid var(--border-mid);
-    }
-    .prod-status {
-      display:block;
-      font-family:'Syne',sans-serif; font-weight:700; font-size:0.65rem;
-      letter-spacing:0.15em; text-transform:uppercase; color:var(--orange);
-      margin-top:0.75rem;
-    }
-    .svc-row-body { padding:2.5rem 3rem; }
-    .svc-row-body p { font-size:0.83rem; line-height:1.8; color:var(--warm-gray); margin-bottom:1.5rem; overflow-wrap:break-word; }
-    .svc-row-body p strong { color:var(--ink); font-weight:500; }
-    .svc-items { list-style:none; display:flex; flex-direction:column; gap:0.4rem; }
-    .svc-items li {
-      font-size:0.8rem; color:var(--warm-gray); line-height:1.5;
-      display:flex; align-items:center; gap:0.5rem;
-    }
-    .svc-items li::before { content:'→'; color:var(--orange); font-size:0.72rem; flex-shrink:0; }
-    .prod-cta { margin-top:1.75rem; }
-
-    /* Product page preview thumbnail */
-    .svc-row-preview { padding:2.5rem 3rem 2.5rem 0; align-self:center; }
-    .svc-row-preview a { display:block; text-decoration:none; }
-    .preview-frame {
-      display:block; width:100%; aspect-ratio:16/10;
-      border:1px solid var(--border-mid); border-radius:2px;
-      overflow:hidden; background:var(--paper-mid);
-      transition:transform 0.25s ease, box-shadow 0.25s ease;
-    }
-    .svc-row-preview a:hover .preview-frame,
-    .svc-row-preview a:focus-visible .preview-frame { transform:translateY(-3px); box-shadow:0 8px 32px rgba(26,20,16,0.14); }
-    .preview-frame img { width:100%; height:100%; object-fit:cover; object-position:top; display:block; }
-    .preview-caption {
-      display:block; margin-top:0.7rem;
-      font-family:'Syne',sans-serif; font-weight:700; font-size:0.62rem;
-      letter-spacing:0.14em; text-transform:uppercase; color:var(--warm-gray);
-    }
-    .preview-placeholder {
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      gap:0.4rem; text-align:center; padding:1.5rem;
-    }
-    .preview-placeholder .ph-title {
-      font-family:'Syne',sans-serif; font-weight:800; font-size:1rem;
-      letter-spacing:-0.01em; text-transform:uppercase; color:var(--ink);
-    }
-    .preview-placeholder .ph-title span { color:var(--orange); }
-    .preview-placeholder .ph-sub {
-      font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--warm-gray);
-    }
-
-    /* ══ FUTURE ══ */
-    .future-layout {
-      display:grid; grid-template-columns:1fr 1fr; gap:5rem;
-      align-items:end;
-    }
-    .future-layout h2 { font-size:clamp(2.8rem,5vw,5.5rem); }
-    .future-layout h2 .serif-italic { color:var(--orange); }
-    .future-layout p { font-size:0.9rem; line-height:1.8; color:var(--warm-gray); max-width:360px; overflow-wrap:break-word; }
-
-    /* ══ CTA (full-bleed dark) ══ */
-    #cta { background:var(--ink); }
-    .cta-inner {
-      padding:9rem 3rem;
-      display:flex; flex-direction:column; align-items:center; text-align:center;
-      gap:0;
-    }
-    .cta-label {
-      display:inline-flex; align-items:center; gap:0.7rem;
-      font-size:0.68rem; letter-spacing:0.2em; text-transform:uppercase;
-      color:rgba(245,244,242,0.4); margin-bottom:2.5rem;
-    }
-    .cta-label::before, .cta-label::after { content:''; display:block; width:22px; height:1px; background:rgba(245,244,242,0.2); }
-    .cta-headline {
-      font-family:'Syne',sans-serif; font-weight:800;
-      font-size:clamp(3.5rem,7vw,8.5rem);
-      line-height:0.9; letter-spacing:-0.04em;
-      color:var(--paper); margin-bottom:3rem;
-      overflow-wrap:break-word; word-break:break-word;
-    }
-    .cta-headline em { font-family:'Instrument Serif',serif; font-style:italic; font-weight:400; color:var(--orange); }
-    .cta-sub { font-size:1rem; line-height:1.75; color:rgba(245,244,242,0.5); max-width:480px; margin-bottom:3rem; }
-    .cta-note { margin-top:4rem; font-size:0.72rem; color:rgba(245,244,242,0.25); letter-spacing:0.06em; }
-
-    /* ══ FOOTER ══ */
-    footer {
-      background:var(--ink); color:var(--paper);
-      padding:2rem 3rem;
-      display:flex; align-items:center; justify-content:space-between;
-      flex-wrap:wrap; gap:1.5rem;
-      border-top:1px solid rgba(255,255,255,0.06);
-    }
-    footer img { height:38px; opacity:0.45; filter:brightness(0) invert(1); }
-    .footer-links { display:flex; gap:2rem; }
-    .footer-links a { font-size:0.7rem; color:rgba(245,244,242,0.35); text-decoration:none; letter-spacing:0.09em; text-transform:uppercase; transition:color 0.2s; }
-    .footer-links a:hover { color:var(--paper); }
-    footer small { font-size:0.68rem; color:rgba(245,244,242,0.2); }
-
-    /* ══ ANIMATIONS ══ */
-    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-    .reveal { opacity:0; transform:translateY(24px); transition:opacity 0.65s ease, transform 0.65s cubic-bezier(0.23,1,0.32,1); }
-    .reveal.in { opacity:1; transform:none; }
-    .rd1 { transition-delay:0.08s; }
-    .rd2 { transition-delay:0.16s; }
-    .rd3 { transition-delay:0.24s; }
-    .rd4 { transition-delay:0.32s; }
-
-    /* ══ RESPONSIVE ══ */
-    @media (max-width:1024px) {
-      nav { padding:0 1.5rem; }
-      .nav-links { display:none; }
-      .nav-mobile-cta { display:inline-flex; }
-      .services-intro { grid-template-columns:1fr; gap:2rem; }
-      .svc-row { grid-template-columns:60px 1fr; }
-      .svc-row-title { border-right:none; border-bottom:1px solid var(--border-mid); grid-column:2; padding-bottom:1.5rem; padding-top:1.5rem; }
-      .svc-row-num { padding:2rem 1.5rem; }
-      .svc-row-body { grid-column:2; padding:1.5rem 1.5rem 0.5rem; }
-      .svc-row-preview { grid-column:2; padding:0 1.5rem 2rem; max-width:440px; align-self:start; }
-      .future-layout { grid-template-columns:1fr; gap:2rem; }
-      .section-inner { padding:5rem 1.5rem; }
-      .products-hero-inner { padding:7.5rem 1.5rem 4rem; }
-      footer { padding:2rem 1.5rem; }
-    }
-
-    @media (max-width:640px) {
-      .nav-logo { width:110px; }
-      .nav-logo img { height:172px; width:172px; left:-32px; top:-42px; }
-      .section-inner { padding:4rem 1.25rem; }
-      .products-hero-inner { padding:6.5rem 1.25rem 3.5rem; }
-      .services-intro h1, .services-intro h2 { font-size:clamp(1.4rem,6vw,2.8rem); }
-      .future-layout h2 { font-size:clamp(1.4rem,6vw,2.8rem); }
-      .svc-row { grid-template-columns:1fr; }
-      .svc-row-num { border-right:none; border-bottom:1px solid var(--border-mid); padding:1.5rem 1.5rem; }
-      .svc-row-title { grid-column:1; border-right:none; border-bottom:1px solid var(--border-mid); padding:1.5rem; }
-      .svc-row-body { grid-column:1; padding:1.5rem 1.5rem 0.5rem; }
-      .svc-row-preview { grid-column:1; padding:0 1.5rem 1.75rem; max-width:none; }
-      .cta-inner { padding:6rem 1.25rem; }
-      .cta-headline { font-size:clamp(2rem,8vw,4rem); }
-      footer { flex-direction:column; align-items:flex-start; gap:1.25rem; }
-      .footer-links { flex-wrap:wrap; gap:0.75rem 1.5rem; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Products · GASP! Essential</title>
+<meta name="description" content="Tools built in-house at GASP! Essential, and custom ones built for you. Social Cut turns one video into a week of content.">
+<meta name="theme-color" content="#0A0A0A">
+<meta property="og:title" content="Products · GASP! Essential">
+<meta property="og:description" content="Tools built in-house at GASP! Essential, and custom ones built for you. Social Cut turns one video into a week of content.">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://use.typekit.net" crossorigin>
+<link rel="stylesheet" href="https://use.typekit.net/xsp0whc.css">
+<link rel="stylesheet" href="https://use.typekit.net/kfq0nlf.css">
+<link rel="stylesheet" href="site.css">
 </head>
-<body>
-
-<!-- ══ NAV ══ -->
-<nav>
-  <a href="index.html" class="nav-logo">
-    <img src="GASP_LOGO_UPD_3_TRANSPARENT.png" alt="GASP! Essential">
-  </a>
-  <div class="nav-links">
-    <a href="index.html#problem">The Problem</a>
-    <a href="index.html#services">Services</a>
-    <a href="products.html">Products</a>
-    <a href="index.html#about">About</a>
-    <a href="index.html#platforms">Platforms</a>
-    <a href="index.html#engage">Work With Us</a>
-    <a href="index.html#cta" class="nav-btn">Book a Session</a>
-  </div>
-  <a href="index.html#cta" class="nav-btn nav-mobile-cta">Book a Session</a>
+<body data-ghosts="BUILT,CUT,IDEA,NEXT">
+<div class="grain" aria-hidden="true"></div>
+<header class="nav">
+  <a class="home" href="index.html" aria-label="GASP! Essential home"><img src="logo.svg" alt="" width="92" height="34"></a>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu"><span>Menu</span><i aria-hidden="true"></i></button>
+</header>
+<nav class="menu" id="menu" aria-label="Site">
+  <ol><li><a href="index.html">Home</a></li><li><a href="services.html">Services</a></li><li><a href="about.html">About</a></li><li><a href="products.html" aria-current="page">Products</a></li></ol>
+  <div class="foot"><a href="mailto:tyler.fitton@gaspessential.com">tyler.fitton@gaspessential.com</a><a href="https://socialcut.io" target="_blank" rel="noopener">socialcut.io</a></div>
 </nav>
-
-<!-- ══ PRODUCTS HERO ══ -->
-<section id="products">
-  <div class="products-hero-inner">
-    <div class="section-label">Products</div>
-    <div class="services-intro" style="margin-bottom:0;">
-      <h1 class="section-h">What we<br><span class="serif-italic" style="color:var(--orange);">build.</span></h1>
-      <p>Tools built in-house at GASP! Essential — and custom ones built for you. <strong>When the process works, we productize it. This store grows as it does.</strong></p>
-    </div>
+<div class="bg" aria-hidden="true"><div class="world"></div></div>
+<main class="page">
+<section class="hero"><div class="wrap">
+  <h1 class="disp" data-focus>Tools, built in-house.<span class="serif">Off the shelf, or built to order.</span></h1>
+  <p class="lede" data-focus>When a process proves itself on client work, it earns a spot here. If what you need doesn't exist yet, that's what the second product is for.</p>
+</div></section>
+<section class="block"><div class="wrap">
+  <div class="products">
+    <article class="product" data-focus>
+      <div class="state">Waitlist open</div>
+      <h3>Social Cut</h3>
+      <p class="line serif">One video in. A week of content out.</p>
+      <p class="body">Drop in one raw video, the podcast episode, the demo, the keynote, and get back a publish-ready content package, cut the way I'd cut it for a client channel.</p>
+      <ul class="list">
+        <li><span>A</span>Captioned cuts in every aspect ratio: Reels, TikTok, LinkedIn, YouTube</li>
+        <li><span>B</span>A designed, swipeable carousel built from the video's key points</li>
+        <li><span>C</span>Post copy and hooks written for each platform</li>
+      </ul>
+      <div class="ctas"><a class="btn" href="https://socialcut.io" target="_blank" rel="noopener"><svg class="a" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 10L10 4M5 4h5v5"/></svg><span class="t">Join the waitlist</span><svg class="b" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
+    </article>
+    <article class="product" data-focus style="--i:1">
+      <div class="state">By conversation</div>
+      <h3>Custom Solutions</h3>
+      <p class="line serif">Have a product you wish existed?</p>
+      <p class="body">An internal tool, a content system, something your team keeps doing by hand. Bring the idea; we scope it together and I build it.</p>
+      <ul class="list">
+        <li><span>A</span>Discovery call to define the idea and the outcome</li>
+        <li><span>B</span>Clear scope and proposal before any build starts</li>
+        <li><span>C</span>Design and development handled end to end</li>
+        <li><span>D</span>Launch, handoff and ongoing support</li>
+      </ul>
+      <div class="ctas"><a class="btn" href="mailto:tyler.fitton@gaspessential.com?subject=Custom%20Solution%20Idea"><svg class="a" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/><path d="M2 4l6 5 6-5"/></svg><span class="t">Pitch your idea</span><svg class="b" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
+    </article>
   </div>
-</section>
-
-<hr class="section-rule">
-
-<!-- ══ PRODUCT LIST ══ -->
-<section id="product-list" style="background:var(--paper-light);">
-  <div class="section-inner">
-    <div class="section-label reveal">The Lineup</div>
-    <div class="services-intro">
-      <h2 class="section-h reveal">Pick your<br><span class="serif-italic" style="color:var(--orange);">product.</span></h2>
-      <p class="reveal rd1">Every product here started as work we did by hand for clients. When a process proves itself, it earns a spot in the lineup — and if what you need doesn't exist yet, that's what the last row is for.</p>
-    </div>
-    <div class="services-rows">
-      <div class="svc-row reveal">
-        <div class="svc-row-num">01</div>
-        <div class="svc-row-title">Social Cut
-          <span class="prod-status">Waitlist Open</span>
-        </div>
-        <div class="svc-row-body">
-          <p><strong>One video in. A week of content out.</strong> Drop in one raw video — the podcast episode, the demo, the keynote — and get back a publish-ready content package, cut the way we'd cut it for a client channel.</p>
-          <ul class="svc-items">
-            <li>Captioned cuts in every aspect ratio — Reels, TikTok, LinkedIn, YouTube</li>
-            <li>A designed, swipeable carousel built from the video's key points</li>
-            <li>Post copy and hooks written for each platform</li>
-          </ul>
-          <div class="prod-cta">
-            <a href="https://socialcut.io" target="_blank" rel="noopener" class="btn-ghost">
-              Join the Waitlist at socialcut.io
-              <svg class="arrow-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3l4 4-4 4M3 7h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-          </div>
-        </div>
-        <div class="svc-row-preview">
-          <a href="https://socialcut.io" target="_blank" rel="noopener">
-            <span class="preview-frame"><img src="social-cut-preview.jpg" alt="The Social Cut site: one video in, a week of content out" loading="lazy"></span>
-            <span class="preview-caption">Preview · socialcut.io</span>
-          </a>
-        </div>
-      </div>
-      <div class="svc-row reveal rd1">
-        <div class="svc-row-num">02</div>
-        <div class="svc-row-title">Custom Solutions
-          <span class="prod-status">By Conversation</span>
-        </div>
-        <div class="svc-row-body">
-          <p><strong>Have a product you wish existed?</strong> If there's a specific idea you want to bring to life — an internal tool, a content system, something your team keeps doing by hand — bring it to us. We'll scope it together and GASP! Essential develops it for you.</p>
-          <ul class="svc-items">
-            <li>Discovery call to define the idea and the outcome</li>
-            <li>Clear scope and proposal before any build starts</li>
-            <li>Design and development handled end to end</li>
-            <li>Launch, handoff, and ongoing support</li>
-          </ul>
-          <div class="prod-cta">
-            <a href="mailto:tyler.fitton@gaspessential.com?subject=Custom%20Solution%20Idea" class="btn-ghost">
-              Pitch Your Idea
-              <svg class="arrow-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3l4 4-4 4M3 7h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-          </div>
-        </div>
-        <div class="svc-row-preview">
-          <a href="mailto:tyler.fitton@gaspessential.com?subject=Custom%20Solution%20Idea">
-            <span class="preview-frame preview-placeholder">
-              <span class="ph-title">Your product <span>here.</span></span>
-              <span class="ph-sub">Bring the idea — we build it</span>
-            </span>
-            <span class="preview-caption">Preview · Coming From You</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ MARQUEE ══ -->
-<div class="marquee-band" aria-hidden="true">
-  <div class="marquee-track">
-  <div class="marquee-inner">
-    <!-- two copies for seamless loop -->
-    <span class="marquee-item">Social Cut <span class="marquee-dot"></span></span>
-    <span class="marquee-item">One Video In <span class="marquee-dot"></span></span>
-    <span class="marquee-item">A Week of Content Out <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Custom Solutions <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Your Idea, Built <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Built by GASP! Essential <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Social Cut <span class="marquee-dot"></span></span>
-    <span class="marquee-item">One Video In <span class="marquee-dot"></span></span>
-    <span class="marquee-item">A Week of Content Out <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Custom Solutions <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Your Idea, Built <span class="marquee-dot"></span></span>
-    <span class="marquee-item">Built by GASP! Essential <span class="marquee-dot"></span></span>
-  </div>
-  </div>
-</div>
-
-<!-- ══ FUTURE ══ -->
-<section id="future">
-  <div class="section-inner">
-    <div class="section-label reveal">What's Next</div>
-    <div class="future-layout">
-      <h2 class="section-h reveal">More in the<br><span class="serif-italic">pipeline.</span></h2>
-      <p class="reveal rd1">The lineup grows as more of our process earns its way into a tool. Check back — or tell us what should exist next.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ══ CTA ══ -->
-<section id="cta">
-  <div class="cta-inner">
-    <div class="cta-label">Start Something</div>
-    <h2 class="cta-headline reveal">Off the shelf, or <em>built to order.</em></h2>
-    <p class="cta-sub reveal rd1">Join the Social Cut waitlist, or bring us the product idea you want developed. Either way, it starts with one message.</p>
-    <div class="reveal rd2" style="display:flex; align-items:center; gap:2.5rem; flex-wrap:wrap; justify-content:center;">
-      <a href="https://socialcut.io" target="_blank" rel="noopener" class="btn-fill" style="font-size:0.85rem;padding:1rem 2.2rem;">
-        Join the Waitlist at socialcut.io
-        <svg class="arrow-icon" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-      <a href="mailto:tyler.fitton@gaspessential.com?subject=Custom%20Solution%20Idea" class="btn-ghost" style="color:var(--paper); border-color:rgba(245,244,242,0.3);">
-        Pitch a Custom Solution
-        <svg class="arrow-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3l4 4-4 4M3 7h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-    </div>
-    <p class="cta-note reveal rd3">Products · Built by GASP! Essential</p>
-  </div>
-</section>
-
-<!-- ══ FOOTER ══ -->
-<footer>
-  <img src="GASP_LOGO_UPD_3_TRANSPARENT.png" alt="GASP! Essential">
-  <div class="footer-links">
-    <a href="index.html#problem">The Problem</a>
-    <a href="index.html#services">Services</a>
-    <a href="products.html">Products</a>
-    <a href="index.html#about">About</a>
-    <a href="index.html#platforms">Platforms</a>
-    <a href="index.html#engage">Work With Us</a>
-  </div>
-  <small>© 2026 GASP! Essential. All rights reserved.</small>
-</footer>
-
-<script>
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
-  }, { threshold: 0.08 });
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-</script>
+</div></section>
+<section class="close"><div class="wrap">
+  <h2 class="disp" data-focus>Build it once.<span class="serif">Let it run.</span></h2>
+  <p class="pitch" data-focus>More tools are in the pipeline. Tell me what should exist next.</p>
+  <div class="ctas" data-focus><a class="btn" href="mailto:tyler.fitton@gaspessential.com?subject=Let%27s%20talk"><svg class="a" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/><path d="M2 4l6 5 6-5"/></svg><span class="t">Email me directly</span><svg class="b" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a><a class="link" href="services.html"><span class="win"><span class="stack"><span>See what I build</span><span>See what I build</span></span></span><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 10L10 4M5 4h5v5"/></svg></a></div>
+  <footer class="sign">
+    <div class="who"><b>Tyler Fitton</b><br><span>Creative Director, GASP! Essential · St. Louis</span></div>
+    <nav aria-label="Footer"><a href="index.html">Home</a><a href="services.html">Services</a><a href="about.html">About</a><a href="products.html">Products</a><a href="mailto:tyler.fitton@gaspessential.com">tyler.fitton@gaspessential.com</a></nav>
+  </footer>
+</div></section>
+</main>
+<script src="env.js"></script>
 </body>
 </html>
