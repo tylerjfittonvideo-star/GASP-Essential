@@ -170,6 +170,7 @@ section.block{padding:14vh 0}
 .sign nav{display:flex;flex-wrap:wrap;gap:10px 24px}
 .sign nav a{font-family:var(--label);font-weight:900;font-size:14px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;text-decoration:none}
 .sign nav a:hover{color:var(--paper)}
+.sign .legal{flex-basis:100%;margin:0;font-size:12px;line-height:1.5;color:var(--muted)}
 
 /* ---------- rack-focus reveals on inner pages ---------- */
 .js [data-focus]{filter:blur(12px);opacity:.12;transform:translateY(24px);
