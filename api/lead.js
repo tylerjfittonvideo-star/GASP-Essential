@@ -17,6 +17,9 @@
      LEAD_MAILBOX           mailbox the alert is sent from, e.g. tyler.fitton@gaspessential.com
      LEAD_TO                optional, where the alert lands (defaults to LEAD_MAILBOX)
      BOOKING_URL            Microsoft Bookings page the visitor is sent to after submitting
+     FLEET_INBOUND_TOKEN    the lead fleet's INBOUND_TOKEN (2026-10-26): every fill is handed to the fleet, which stores it in D1,
+                            opens the deal on the dashboard and has Speed-to-Lead send the first reply
+     FLEET_API_URL          optional, default https://gasp-fleet-api.strategicom-tools.workers.dev
 */
 const crypto = require("crypto");
 
@@ -31,6 +34,7 @@ const QUALIFIED = ["10-25", "26-50"];
 // Public, non-secret defaults so the funnel works before any env vars are set. Env vars still win.
 const DEFAULT_BOOKING_URL = "https://bookings.cloud.microsoft/bookwithme/user/2238aa5817e048cf8933378da069820f@gaspessential.com/meetingtype/wUsz-P-oIUipv3nfj2f1nw2?anonymous";
 const DEFAULT_PIXEL_ID = "4545759298978855";
+const DEFAULT_FLEET_URL = "https://gasp-fleet-api.strategicom-tools.workers.dev";
 
 function phoneE164Digits(p) {
   let d = String(p || "").split(/x|ext|#/i)[0].replace(/\D/g, "");
@@ -70,6 +74,26 @@ async function sendCapi(lead, ctx) {
   });
   if (!r.ok) throw new Error(`capi ${r.status} ${(await r.text()).slice(0, 300)}`);
   return "sent";
+}
+
+// The fleet is the record of truth for every fill (D1 + the deal + Speed-to-Lead). Two tries; the same event_id makes a retry a no-op there.
+async function sendFleet(lead, ctx) {
+  const token = env("FLEET_INBOUND_TOKEN");
+  if (!token) return "skipped";
+  const url = (env("FLEET_API_URL") || DEFAULT_FLEET_URL).replace(/\/+$/, "") + "/v1/inbound";
+  let last = "";
+  for (let i = 0; i < 2; i++) {
+    try {
+      const r = await fetch(url, {
+        method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ ...lead, event_id: ctx.eventId }), signal: AbortSignal.timeout(4000)  // 2 x 4 s stays inside the 10 s function limit
+      });
+      if (r.ok) return "sent";
+      last = `fleet ${r.status} ${(await r.text()).slice(0, 200)}`;
+      if (r.status < 500) break;  // a 4xx won't change on retry
+    } catch (e) { last = `fleet ${e.name}: ${e.message}`; }
+  }
+  throw new Error(last);
 }
 
 async function sendMail(lead) {
@@ -137,12 +161,15 @@ module.exports = async (req, res) => {
     fbp: clean(b.fbp, 120), fbc: clean(b.fbc, 300), url: lead.url
   };
 
-  const [capi, mail] = await Promise.allSettled([sendCapi(lead, ctx), sendMail(lead)]);
+  const [capi, mail, fleet] = await Promise.allSettled([sendCapi(lead, ctx), sendMail(lead), sendFleet(lead, ctx)]);
   if (capi.status === "rejected") console.error("lead capi failed:", capi.reason && capi.reason.message);
   if (capi.status === "fulfilled" && capi.value === "skipped") console.warn("lead capi skipped: META_PIXEL_ID / META_CAPI_TOKEN not set");
-  const delivered = mail.status === "fulfilled" && mail.value === "sent";
-  // The lead is always written to the function log, so nothing is ever lost even if the alert fails.
-  console[delivered ? "log" : "error"](delivered ? "LEAD" : "LEAD ALERT NOT DELIVERED", JSON.stringify({ ...lead, event_id: ctx.eventId,
+  const mailed = mail.status === "fulfilled" && mail.value === "sent";
+  const stored = fleet.status === "fulfilled" && fleet.value === "sent";
+  const delivered = mailed || stored;
+  // The lead is always written to the function log too, so nothing is ever lost even if both hand-offs fail.
+  console[stored ? "log" : "error"](stored ? "LEAD" : "LEAD NOT IN FLEET", JSON.stringify({ ...lead, event_id: ctx.eventId,
+    fleet: fleet.status === "rejected" ? String(fleet.reason && fleet.reason.message) : fleet.value,
     mail: mail.status === "rejected" ? String(mail.reason && mail.reason.message) : mail.value }));
   if (!delivered && !booking_url) return res.status(502).json({ ok: false, error: "deliver" });
   return res.status(200).json({ ok: true, booking_url });
