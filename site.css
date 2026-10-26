@@ -206,9 +206,9 @@ a.tile:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
 
 /* ABOUT · full-bleed arena hero */
 .hero.full{min-height:100vh;min-height:100svh;align-items:end;padding:0 0 12vh}
-.hero.full .bgimg{position:absolute;inset:0;overflow:hidden}
+.hero.full .bgimg{position:absolute;inset:clamp(64px,10vh,104px) 0 0 0;overflow:hidden}
 .hero.full .bgimg img{width:100%;height:100%;object-fit:cover;transform-origin:50% 30%;will-change:transform}
-.hero.full .bgimg::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--ink) 0%,rgba(10,10,10,.92) 22%,rgba(10,10,10,.55) 42%,rgba(10,10,10,0) 68%)}
+.hero.full .bgimg::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,var(--ink) 0,rgba(10,10,10,.6) 40px,rgba(10,10,10,0) 120px),linear-gradient(to top,var(--ink) 0%,rgba(10,10,10,.92) 22%,rgba(10,10,10,.55) 42%,rgba(10,10,10,0) 68%)}
 .hero.full .wrap{display:block}
 
 /* ABOUT · scoreboard: dot-matrix panel, LoRes numerals */

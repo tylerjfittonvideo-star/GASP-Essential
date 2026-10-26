@@ -16,7 +16,7 @@
   const clean = v => (v || "").replace(/[<>{}$]/g, "").replace(/\s+/g, " ").trim().slice(0, 40);
   const bad = s => !s || /^\$|lead\.|first.?name|company/i.test(s);
   const name = clean(q.get("name")), co = clean(q.get("co"));
-  const hi = d.getElementById("hi"); if (hi && !bad(name)) hi.textContent = `${name}, take your`;
+  const hi = d.getElementById("hi"); if (hi && !bad(name)) hi.textContent = `${name}, embrace your`;
   const cq = d.getElementById("closeq"); if (cq && !bad(co)) cq.innerHTML = `Who would ${co} hire <em>first?</em>`;
 
   /* ---------- menu ---------- */
