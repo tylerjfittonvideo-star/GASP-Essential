@@ -41,12 +41,11 @@ picture{display:contents}
 .menu-open .menu-btn i::before{top:4px;transform:rotate(45deg)}.menu-open .menu-btn i::after{top:4px;transform:rotate(-45deg)}
 .menu-btn:hover{color:var(--orange)}.menu-btn:active{transform:scale(.96)}
 .menu-btn:focus-visible,.menu a:focus-visible{outline:2px solid var(--paper);outline-offset:4px}
-.menu{position:fixed;inset:0;z-index:55;background:rgba(10,10,10,.97);display:flex;flex-direction:column;padding:calc(max(20px,env(safe-area-inset-top)) + 78px) var(--gutter) max(28px,env(safe-area-inset-bottom));overflow-y:auto;overscroll-behavior:contain;opacity:0;pointer-events:none;transition:opacity .35s ease}
-.menu ol{margin-top:auto}.menu .foot{margin-bottom:auto}
+.menu{position:fixed;inset:0;z-index:55;background:rgba(10,10,10,.97);display:flex;flex-direction:column;justify-content:center;padding:0 var(--gutter);opacity:0;pointer-events:none;transition:opacity .35s ease}
 .menu-open .menu{opacity:1;pointer-events:auto}
 .menu ol{list-style:none}
 .menu li{border-top:1px solid var(--line)}.menu li:last-child{border-bottom:1px solid var(--line)}
-.menu ol a{display:block;padding:1.2vh 0;text-decoration:none;font-family:var(--display);font-style:italic;font-weight:900;letter-spacing:-.035em;font-size:clamp(36px,min(11vw,12.5vh),124px);line-height:1.04;
+.menu ol a{display:block;padding:1.2vh 0;text-decoration:none;font-family:var(--display);font-style:italic;font-weight:900;letter-spacing:-.035em;font-size:clamp(44px,8.4vw,124px);line-height:1;
   opacity:.1;transform:translateY(18px);transition:opacity .6s var(--out),transform .6s var(--out),color .2s}
 .menu-open .menu ol a{opacity:1;transform:none}
 .menu-open .menu li:nth-child(2) a{transition-delay:.06s}.menu-open .menu li:nth-child(3) a{transition-delay:.12s}.menu-open .menu li:nth-child(4) a{transition-delay:.18s}
@@ -314,3 +313,49 @@ a.tile:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
   .depth{height:auto}.depth .stage{position:relative;height:auto;padding:18vh 0}
   .track{height:auto}.track .stage{position:relative;height:auto}
 }
+
+/* ================= v4.2 · paid landing pages + lead form (2026-10-26) ================= */
+/* LP hero: headline + one context line + CTA, relay bot on the right */
+.hero.lp .wrap{grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr)}
+.hero.lp .for{margin-top:3.2vh;color:var(--muted)}
+.hero.lp .ctas{margin-top:4.5vh}
+.hero.lp .heroBot{max-width:520px;justify-self:end}
+.tile .img .gbot{width:100%;height:100%;aspect-ratio:auto}
+/* pricing board: same scoreboard, numerals sized for "$2,500" */
+.board.price .big{font-size:clamp(52px,6.2vw,104px)}
+/* lead form: underline fields on ink, mono labels, the site's orange button */
+.lead{grid-column:1;grid-row:2;margin-top:5vh;max-width:760px}
+.lead .row{display:grid;grid-template-columns:1fr 1fr;gap:0 28px}
+.lead label{display:block;padding:14px 0 0}
+.lead label .mono{display:block;color:var(--muted);font-size:11px}
+.lead input,.lead select{width:100%;margin-top:6px;padding:10px 0 12px;background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;color:var(--paper);
+  font-family:var(--display);font-style:italic;font-weight:200;font-size:clamp(20px,1.9vw,26px);letter-spacing:-.02em;outline:0;transition:border-color .2s ease;-webkit-appearance:none;appearance:none}
+.lead select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23E84B1C' stroke-width='1.8'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 2px center;background-size:16px;padding-right:26px}
+.lead select option{background:var(--ink);color:var(--paper);font-style:normal}
+.lead input:focus,.lead select:focus{border-bottom-color:var(--orange);box-shadow:0 1px 0 0 var(--orange)}
+.lead input:focus-visible,.lead select:focus-visible{outline:2px solid var(--orange);outline-offset:4px}
+.lead .ok:focus{outline:0}
+.lead input[aria-invalid="true"],.lead select[aria-invalid="true"]{border-bottom-color:var(--orange);border-bottom-style:dashed}
+.lead .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.lead .ctas{margin-top:4.5vh}
+button.btn{border:0;cursor:pointer}
+button.btn[disabled]{opacity:.55;cursor:progress}
+.lead .msg{min-height:1.5em;margin-top:2.4vh;color:var(--muted)}
+.lead .msg.err{color:var(--orange)}
+.lead.done .row,.lead.done label,.lead.done .ctas.send{display:none}
+.lead .ok h3{font-family:var(--display);font-style:italic;font-weight:900;letter-spacing:-.035em;line-height:1;font-size:clamp(32px,3.6vw,56px)}
+.lead .ok .ctas{margin-top:3.5vh}
+@media (max-width:860px){
+  .hero.lp .wrap{grid-template-columns:1fr}
+  .hero.lp .heroBot{max-width:360px;justify-self:start;margin-top:6vh}
+  .lead{grid-column:1}
+  .lead .row{grid-template-columns:1fr}
+}
+.close.solo{border-top:0;padding-top:22vh}
+/* privacy: one readable column, same type system */
+.legalpage{padding-top:22vh}
+.legalpage .prose{max-width:62ch;margin-top:6vh}
+.legalpage .prose h2{font-family:var(--display);font-style:italic;font-weight:900;letter-spacing:-.03em;font-size:clamp(24px,2.4vw,34px);line-height:1.05;margin:5vh 0 1.4vh}
+.legalpage .prose p{color:var(--body);font-size:18px;line-height:1.65}
+.legalpage .prose p.mono{color:var(--muted);font-size:12px}
+.legalpage .prose a{color:var(--orange)}
