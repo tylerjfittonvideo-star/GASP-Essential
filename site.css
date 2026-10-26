@@ -167,18 +167,13 @@ a.tile:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
 /* SERVICES · chapters: one service per band, image + what's included, pip rail tracks position */
 .chap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(28px,5vw,88px);align-items:center;padding:14vh 0;border-top:1px solid var(--line);scroll-margin-top:80px}
 .chap:nth-child(even) .media{order:2}
+.chap:nth-child(even),.prod:nth-child(even){grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)}
 .chap .media{position:relative;border:1px solid var(--line);perspective:1400px}
 .chap .media img{width:100%;height:auto;aspect-ratio:16/10;object-fit:cover}
 .chap .media .cap{position:absolute;left:0;right:0;height:0;border-top:1.5px dashed var(--paper)}
 .chap .media .cap span{position:absolute;right:14px;top:-20px;font-family:var(--mono);font-weight:700;font-size:11px;letter-spacing:.1em}
 .chap .nm{font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;font-size:12px;color:var(--orange)}
 .chap h2{font-family:var(--display);font-style:italic;font-weight:900;letter-spacing:-.04em;line-height:.96;font-size:clamp(40px,4.8vw,76px);margin-top:14px}
-.chap.wide{grid-template-columns:1fr;gap:clamp(28px,4vw,56px)}
-.chap.wide .media{order:0}
-.chap.wide .copy{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:clamp(28px,5vw,88px);align-items:end}
-.chap.wide .copy>*{grid-column:1}
-.chap.wide .copy .inc{grid-column:2;grid-row:1 / span 3;margin-top:0}
-@media (max-width:860px){.chap.wide .copy{display:block}.chap.wide .copy .inc{margin-top:4vh}}
 .chap .d,.prod .d{margin-top:2.4vh;max-width:46ch;font-size:18px;line-height:1.6;color:var(--body)}
 .inc{list-style:none;margin-top:4vh;border-top:1px solid var(--line)}
 .inc li{display:flex;gap:14px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--body)}
@@ -270,7 +265,7 @@ a.tile:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
 
 @media (max-width:860px){
   .deck{position:absolute;right:-24vw;top:4vh;width:86vw;max-width:none;opacity:.5;z-index:-1}
-  .chap,.prod{grid-template-columns:1fr;padding:9vh 0;gap:26px}
+  .chap,.prod,.chap:nth-child(even),.prod:nth-child(even){grid-template-columns:1fr;padding:9vh 0;gap:26px}
   .chap:nth-child(even) .media,.prod:nth-child(even) .media{order:0}
   .rail{display:none}
   .track{height:auto}.track .stage{position:relative;height:auto;padding:4vh 0}
