@@ -143,7 +143,7 @@
     if (t > .64 && t < .88) bubble(c, bx - 6, FY - 128, 40, 23, "check", T);
   } };
 
-  /* Security + governance: nothing passes the gate until you say yes */
+  /* Security + governance: every job is checked against the rules at the gate, then waved through */
   S.guard = { P: 5.8, still: .58, draw(c, t, T) {
     floor(c);
     const a = t < .52 ? 0 : t < .6 ? seg(t, .52, .6) * 1.3 : t < .86 ? 1.3 : 1.3 - seg(t, .86, .94) * 1.3;
@@ -154,13 +154,9 @@
     c.restore();
     circ(c, 189.5, FY - 52, 5, .95);
     const ask = t > .3 && t < .45, ok = t > .45 && t < .6;
-    if (t > .36 && t < .6) {                                            // your approval drops in
-      const k = seg(t, .36, .43), out = seg(t, .55, .6), y = lerp(-30, 12, k) - out * 40;
-      rr(c, 118, y, 48, 28, 8, .95); tick(c, 142, y + 14, 1, 0, 3.8);
-    }
     glow(c, 254, FY + 2, 44, 9, ok ? .32 : .12);
     bot(c, 254, FY, .95, { act: ask || ok, look: clamp((dx - 254) / 30, -4, 4), bob: Math.sin(T * TAU * .8) * 1.2, R: ok ? [284, FY - 104] : null });
-    if (ask) bubble(c, 248, FY - 124, 40, 23, "q", T);
+    if (ask) bubble(c, 248, FY - 124, 40, 23, "dots", T);
     if (ok) bubble(c, 214, FY - 124, 40, 23, "check", T);
     doc(c, dx, FY - 20, 1.1, 3, t > .45);
   } };
