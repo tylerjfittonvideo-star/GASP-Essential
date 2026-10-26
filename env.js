@@ -63,10 +63,10 @@
   /* ---------- index peek (Services): the lane's image follows the cursor ---------- */
   const peek = d.querySelector(".peek");
   if (peek && matchMedia("(hover:hover)").matches && !reduce) {
-    const pimg = peek.querySelector("img"); let mx = 0, my = 0, cx = 0, cy = 0, on = false;
+    const pc = peek.querySelector("canvas"); let mx = 0, my = 0, cx = 0, cy = 0, on = false;
     $$(".index a").forEach(a => {
-      a.addEventListener("pointerenter", () => { pimg.src = a.dataset.img; peek.classList.add("on"); on = true; });
-      a.addEventListener("pointerleave", () => { peek.classList.remove("on"); on = false; }); });
+      a.addEventListener("pointerenter", () => { if (window.GaspBots) GaspBots.set(pc, a.dataset.bot); delete pc.dataset.idle; peek.classList.add("on"); on = true; });
+      a.addEventListener("pointerleave", () => { pc.dataset.idle = "1"; peek.classList.remove("on"); on = false; }); });
     addEventListener("pointermove", e => { mx = e.clientX; my = e.clientY; }, { passive: true });
     const loop = () => { cx += (mx - cx) * .14; cy += (my - cy) * .14;
       if (on) peek.style.transform = `translate3d(${(cx + 28).toFixed(1)}px,${(cy - 120).toFixed(1)}px,0) rotate(${clamp((mx - cx) * .06, -8, 8).toFixed(2)}deg)`;

@@ -149,6 +149,12 @@ a.tile:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
 .close{padding:20vh 0 6vh;border-top:1px solid var(--line)}
 .close h2.bk{font-size:clamp(46px,8.6vw,140px)}
 .close .ctas{margin-top:5vh}
+/* closing question: three eager bots beside the button */
+.close .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,400px);column-gap:clamp(24px,4vw,64px);align-items:center}
+.close h2.bk,.close .sign{grid-column:1 / -1}
+.close .pick{grid-column:2;grid-row:2;margin-top:3vh}
+.sign .night{flex-basis:100%;margin:0 0 6px -10px}.sign .night canvas{max-width:240px}
+@media (max-width:860px){.close .wrap{grid-template-columns:1fr}.close .pick{grid-column:1;grid-row:auto;max-width:360px;margin-top:6vh}}
 .sign{margin-top:16vh;padding-top:20px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-between;align-items:end}
 .sign .who{font-size:15px;line-height:1.5}.sign .who b{font-weight:600}.sign .who span{color:var(--muted)}
 .sign nav{display:flex;flex-wrap:wrap;gap:10px 24px}
@@ -213,7 +219,7 @@ a.tile:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
 @media (hover:hover){.index.deep a:hover .d{transform:translateX(18px)}}
 /* services · scanline wipe: the dot screen prints down the frame as it scrolls in */
 .chap .media{overflow:hidden}
-.js .chap .media[data-scan] img{clip-path:inset(0 0 calc((1 - var(--s,0)) * 100%) 0)}
+.js .chap .media[data-scan] img,.js .chap .media[data-scan] canvas{clip-path:inset(0 0 calc((1 - var(--s,0)) * 100%) 0)}
 .js .chap .media[data-scan]::after{content:"";position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(to bottom,var(--orange) 0,var(--orange) 2px,rgba(232,75,28,.28) 3px,rgba(232,75,28,0) 26px);
   transform:translateY(calc(var(--s,0) * 100% - 1px));opacity:calc((1 - var(--s,0)) * 8)}
@@ -222,7 +228,8 @@ a.tile:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
 .prod .media{overflow:hidden}
 .js .prod .media[data-iris] img{clip-path:circle(calc(var(--s,0) * 76%) at 50% 50%);transform:scale(calc(1.18 - var(--s,0) * .18))}
 .peek{position:fixed;left:0;top:0;width:360px;aspect-ratio:16/10;pointer-events:none;z-index:40;opacity:0;border:1px solid var(--line);transition:opacity .25s ease;will-change:transform}
-.peek img{width:100%;height:100%;object-fit:cover}
+.peek{background:var(--ink)}
+.peek canvas{width:100%;height:100%}
 .peek.on{opacity:1}
 
 /* ABOUT · full-bleed arena hero */
