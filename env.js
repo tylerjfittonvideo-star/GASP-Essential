@@ -16,7 +16,7 @@
   const clean = v => (v || "").replace(/[<>{}$]/g, "").replace(/\s+/g, " ").trim().slice(0, 40);
   const bad = s => !s || /^\$|lead\.|first.?name|company/i.test(s);
   const name = clean(q.get("name")), co = clean(q.get("co"));
-  const hi = d.getElementById("hi"); if (hi && !bad(name)) hi.textContent = `${name}, hire your`;
+  const hi = d.getElementById("hi"); if (hi && !bad(name)) hi.textContent = `${name}, deploy your`;
   const cq = d.getElementById("closeq"); if (cq && !bad(co)) cq.innerHTML = `Who would ${co} hire <em>first?</em>`;
 
   /* ---------- menu ---------- */
@@ -42,12 +42,54 @@
   if (reduce || !("IntersectionObserver" in window)) rises.forEach(el => el.classList.add("in"));
   else { const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: .15, rootMargin: "0px 0px -6% 0px" }); rises.forEach(el => io.observe(el)); }
 
-  if (reduce) { addEventListener("scroll", navF, { passive: true }); navF(); $$("[data-fly]").forEach(el => el.style.opacity = 1); return; }
+  /* ---------- scoreboard count-up (About) ---------- */
+  const counts = $$("[data-count]");
+  const runCount = el => { const to = +el.dataset.count, suf = el.dataset.suf || "", t0 = performance.now(), dur = reduce ? 0 : 1400;
+    const step = now => { const k = dur ? clamp((now - t0) / dur) : 1; el.textContent = Math.round(to * ease(k)) + suf; if (k < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); };
+  if ("IntersectionObserver" in window) { const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { runCount(e.target); io.unobserve(e.target); } }), { threshold: .5 }); counts.forEach(el => io.observe(el)); }
+  else counts.forEach(runCount);
+
+  /* ---------- pip rail (Services): which chapter you're in ---------- */
+  const rail = d.querySelector(".rail"), chaps = $$(".chap");
+  if (rail && chaps.length && "IntersectionObserver" in window) {
+    const pips = $$("a", rail);
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { const i = chaps.indexOf(e.target); pips.forEach((p, j) => p.classList.toggle("lit", j === i)); } }), { rootMargin: "-45% 0px -45% 0px" });
+    chaps.forEach(c => io.observe(c));
+    const sec = rail.closest("[data-rail-zone]") || chaps[0].parentElement;
+    const io2 = new IntersectionObserver(es => es.forEach(e => rail.classList.toggle("on", e.isIntersecting)), { rootMargin: "-40% 0px -40% 0px" });
+    io2.observe(sec);
+  }
+
+  /* ---------- index peek (Services): the lane's image follows the cursor ---------- */
+  const peek = d.querySelector(".peek");
+  if (peek && matchMedia("(hover:hover)").matches && !reduce) {
+    const pimg = peek.querySelector("img"); let mx = 0, my = 0, cx = 0, cy = 0, on = false;
+    $$(".index a").forEach(a => {
+      a.addEventListener("pointerenter", () => { pimg.src = a.dataset.img; peek.classList.add("on"); on = true; });
+      a.addEventListener("pointerleave", () => { peek.classList.remove("on"); on = false; }); });
+    addEventListener("pointermove", e => { mx = e.clientX; my = e.clientY; }, { passive: true });
+    const loop = () => { cx += (mx - cx) * .14; cy += (my - cy) * .14;
+      if (on) peek.style.transform = `translate3d(${(cx + 28).toFixed(1)}px,${(cy - 120).toFixed(1)}px,0) rotate(${clamp((mx - cx) * .06, -8, 8).toFixed(2)}deg)`;
+      requestAnimationFrame(loop); }; loop();
+  }
+
+  /* ---------- door tilt (Products) ---------- */
+  if (!reduce && matchMedia("(hover:hover)").matches) $$(".door").forEach(door => {
+    door.addEventListener("pointermove", e => { const r = door.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+      door.style.transform = `rotateY(${(x * 7).toFixed(2)}deg) rotateX(${(-y * 5).toFixed(2)}deg) translateZ(14px)`; });
+    door.addEventListener("pointerleave", () => { door.style.transform = ""; }); });
+
+  if (reduce) { addEventListener("scroll", navF, { passive: true }); navF(); $$("[data-fly]").forEach(el => el.style.opacity = 1); $$(".track li").forEach(l => l.classList.add("lit")); return; }
+
+  /* ---------- deck (Services hero) + zoom (About hero) + track (Services) ---------- */
+  const deck = $$(".deck img"), zoom = d.querySelector("[data-zoom]"), track = d.querySelector(".track");
+  const tsteps = track ? $$("li", track) : [];
+  let dx = 0, dy = 0;
 
   /* ---------- 1 · construction bang ---------- */
   const rig = d.querySelector(".bang3d .rig");
   let px = 0, py = 0, rx = 0, ry = 0;
-  if (rig && matchMedia("(hover:hover)").matches) addEventListener("pointermove", e => { px = e.clientX / innerWidth - .5; py = e.clientY / innerHeight - .5; }, { passive: true });
+  if ((rig || d.querySelector(".deck")) && matchMedia("(hover:hover)").matches) addEventListener("pointermove", e => { px = e.clientX / innerWidth - .5; py = e.clientY / innerHeight - .5; }, { passive: true });
 
   /* ---------- 2 · tiles fly out of depth ---------- */
   const flyers = $$("[data-fly]").map(el => { const g = el.parentElement, i = [...g.children].indexOf(el), cols = getComputedStyle(g).gridTemplateColumns.split(" ").length || 1; return { el, lag: (i % cols) * .12 + Math.floor(i / cols) * .04, v: -1 }; });
@@ -72,6 +114,19 @@
       if (Math.abs(p - f.v) < .002) continue; f.v = p;
       f.el.style.opacity = p.toFixed(3);
       f.el.style.transform = p > .999 ? "" : `translate3d(0,${((1 - p) * 70).toFixed(1)}px,${((1 - p) * -320).toFixed(1)}px) rotateX(${((1 - p) * 26).toFixed(2)}deg)`;
+    }
+    if (deck.length) {
+      const sp = clamp(scrollY / vh), n = deck.length;
+      dx += (px - dx) * .08; dy += (py - dy) * .08;
+      deck.forEach((c, i) => { const k = i - (n - 1) / 2, fan = .35 + .65 * Math.min(1, (now / 1000) / 1.4) + sp * .6;
+        c.style.transform = `translate3d(${(k * 70 * fan + dx * 30).toFixed(1)}px,${(k * -34 * fan - sp * 60).toFixed(1)}px,${(i * -90 - sp * 160).toFixed(1)}px) rotateZ(${(k * 6 * fan).toFixed(2)}deg) rotateY(${(-18 + dx * 22).toFixed(2)}deg) rotateX(${(8 - dy * 14).toFixed(2)}deg)`; });
+    }
+    if (zoom) { const sp = clamp(scrollY / vh); zoom.style.transform = `scale(${(1.08 + sp * .18).toFixed(3)}) translateY(${(sp * 6).toFixed(2)}%)`; }
+    if (track && tsteps.length) {
+      const r = track.getBoundingClientRect(), p = clamp(-r.top / Math.max(1, r.height - vh) * 1.1);
+      track.style.setProperty("--p", p.toFixed(3));
+      const at = Math.min(tsteps.length - 1, Math.floor(p * tsteps.length));
+      tsteps.forEach((l, i) => { l.classList.toggle("lit", p > 0 && i <= at); l.classList.toggle("now", p > 0 && i === at); });
     }
     for (const o of depths) {
       const r = o.s.getBoundingClientRect(), span = r.height - vh;
