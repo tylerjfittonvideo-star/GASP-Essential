@@ -79,7 +79,7 @@
       door.style.transform = `rotateY(${(x * 7).toFixed(2)}deg) rotateX(${(-y * 5).toFixed(2)}deg) translateZ(14px)`; });
     door.addEventListener("pointerleave", () => { door.style.transform = ""; }); });
 
-  if (reduce) { addEventListener("scroll", navF, { passive: true }); navF(); $$("[data-fly]").forEach(el => el.style.opacity = 1); $$(".track li").forEach(l => l.classList.add("lit")); return; }
+  if (reduce) { addEventListener("scroll", navF, { passive: true }); navF(); $$("[data-fly]").forEach(el => el.style.opacity = 1); $$("[data-scan],[data-iris]").forEach(el => el.style.setProperty("--s", 1)); $$(".track li").forEach(l => l.classList.add("lit")); return; }
 
   /* ---------- deck (Services hero) + zoom (About hero) + track (Services) ---------- */
   const deck = $$(".deck img"), zoom = d.querySelector("[data-zoom]"), track = d.querySelector(".track");
@@ -93,6 +93,9 @@
 
   /* ---------- 2 · tiles fly out of depth ---------- */
   const flyers = $$("[data-fly]").map(el => { const g = el.parentElement, i = [...g.children].indexOf(el), cols = getComputedStyle(g).gridTemplateColumns.split(" ").length || 1; return { el, lag: (i % cols) * .12 + Math.floor(i / cols) * .04, v: -1 }; });
+
+  /* ---------- services scanline + products iris: scroll-linked reveals (--s 0→1) ---------- */
+  const reveals = $$("[data-scan],[data-iris]").map(el => ({ el, v: -1, span: el.hasAttribute("data-iris") ? .8 : .65 }));
 
   /* ---------- 3 · depth stage ---------- */
   const depths = $$(".depth").map(s => ({ s, q: s.querySelector(".q"), big: s.querySelector(".big") }));
@@ -114,6 +117,15 @@
       if (Math.abs(p - f.v) < .002) continue; f.v = p;
       f.el.style.opacity = p.toFixed(3);
       f.el.style.transform = p > .999 ? "" : `translate3d(0,${((1 - p) * 70).toFixed(1)}px,${((1 - p) * -320).toFixed(1)}px) rotateX(${((1 - p) * 26).toFixed(2)}deg)`;
+    }
+    for (const o of reveals) {
+      if (o.v >= 1) continue;
+      const r = o.el.getBoundingClientRect();
+      if (r.top > vh) continue;
+      if (r.bottom < 0) { o.v = 1; o.el.style.setProperty("--s", 1); continue; }   // jumped past via an anchor
+      const p = ease(clamp((vh - r.top) / (vh * o.span)));
+      if (Math.abs(p - o.v) < .002) continue; o.v = p > .995 ? 1 : p;
+      o.el.style.setProperty("--s", o.v.toFixed(3));
     }
     if (deck.length) {
       const sp = clamp(scrollY / vh), n = deck.length;
