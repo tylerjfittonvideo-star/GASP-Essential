@@ -41,11 +41,12 @@ picture{display:contents}
 .menu-open .menu-btn i::before{top:4px;transform:rotate(45deg)}.menu-open .menu-btn i::after{top:4px;transform:rotate(-45deg)}
 .menu-btn:hover{color:var(--orange)}.menu-btn:active{transform:scale(.96)}
 .menu-btn:focus-visible,.menu a:focus-visible{outline:2px solid var(--paper);outline-offset:4px}
-.menu{position:fixed;inset:0;z-index:55;background:rgba(10,10,10,.97);display:flex;flex-direction:column;justify-content:center;padding:0 var(--gutter);opacity:0;pointer-events:none;transition:opacity .35s ease}
+.menu{position:fixed;inset:0;z-index:55;background:rgba(10,10,10,.97);display:flex;flex-direction:column;padding:calc(max(20px,env(safe-area-inset-top)) + 78px) var(--gutter) max(28px,env(safe-area-inset-bottom));overflow-y:auto;overscroll-behavior:contain;opacity:0;pointer-events:none;transition:opacity .35s ease}
+.menu ol{margin-top:auto}.menu .foot{margin-bottom:auto}
 .menu-open .menu{opacity:1;pointer-events:auto}
 .menu ol{list-style:none}
 .menu li{border-top:1px solid var(--line)}.menu li:last-child{border-bottom:1px solid var(--line)}
-.menu ol a{display:block;padding:1.2vh 0;text-decoration:none;font-family:var(--display);font-style:italic;font-weight:900;letter-spacing:-.035em;font-size:clamp(44px,8.4vw,124px);line-height:1;
+.menu ol a{display:block;padding:1.2vh 0;text-decoration:none;font-family:var(--display);font-style:italic;font-weight:900;letter-spacing:-.035em;font-size:clamp(36px,min(11vw,12.5vh),124px);line-height:1.04;
   opacity:.1;transform:translateY(18px);transition:opacity .6s var(--out),transform .6s var(--out),color .2s}
 .menu-open .menu ol a{opacity:1;transform:none}
 .menu-open .menu li:nth-child(2) a{transition-delay:.06s}.menu-open .menu li:nth-child(3) a{transition-delay:.12s}.menu-open .menu li:nth-child(4) a{transition-delay:.18s}
