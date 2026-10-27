@@ -2,6 +2,7 @@
    1. Validates the form (honeypot drops bots silently).
    2. Sends a Lead event to the Meta Conversions API (plus QualifiedLead for 10-50 seats),
       hashed per Meta spec, same event_id as the browser pixel so Meta de-duplicates.
+   (X: the lead fleet sends the X Conversion API events from the Worker, where the X Ads credentials live; this only passes twclid on.)
    3. Emails the lead to the GASP inbox through Microsoft Graph (app-only, Mail.Send).
    Every lead is written to the function log first-class, so a missing or failing alert never loses it.
    If no alert went out AND no booking page is set, the visitor gets an error and the email fallback.
@@ -150,7 +151,8 @@ module.exports = async (req, res) => {
 
   const lead = {
     name: clean(b.name, 80), email: clean(b.email, 120).toLowerCase(), phone: clean(b.phone, 30),
-    company: clean(b.company, 120), size: clean(b.size, 10), pain: clean(b.pain, 40), page: clean(b.page, 40), url: clean(b.url, 300)
+    company: clean(b.company, 120), size: clean(b.size, 10), pain: clean(b.pain, 40), page: clean(b.page, 40), url: clean(b.url, 300),
+    twclid: clean(b.twclid, 200).replace(/[^A-Za-z0-9_-]/g, "")  // X click id (2026-10-27): the fleet sends it to X's Conversion API
   };
   if (!lead.name || !EMAIL.test(lead.email)) return res.status(400).json({ ok: false, error: "name_email" });
 
