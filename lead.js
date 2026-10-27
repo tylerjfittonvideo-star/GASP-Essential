@@ -16,7 +16,7 @@
   const EMAIL = /^[A-Za-z0-9._%+'-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
   const event_id = uid(); // one id per form view, reused on retry so Meta never double counts (X's conversion_id too)
   // X event ids from Events Manager > Add event (install with pixel AND Conversion API, so both halves share the event); empty = not fired
-  const X_LEAD = "", X_QUALIFIED = "";
+  const X_LEAD = "tw-ri1ae-ri1d4", X_QUALIFIED = "tw-ri1ae-ri1d5";
   const twclid = qs.get("twclid") || cookie("gasp_twclid");
   const page = form.dataset.page || "site";
 
