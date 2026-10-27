@@ -72,6 +72,7 @@
         if (QUALIFIED.includes(f.size)) fbq("trackCustom", "QualifiedLead", { content_name: page }, { eventID: event_id + "-q" });
       }
     } catch (_) {}
+    try { if (window.lintrk) lintrk("track", { conversion_id: 30134252 }); } catch (_) {}
     done(f, /^https:\/\//i.test(j.booking_url || "") ? j.booking_url : null);
   });
 })();

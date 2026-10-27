@@ -14,3 +14,20 @@
   const page = document.currentScript && document.currentScript.dataset.page;
   if (page) fbq("track", "ViewContent", { content_name: page });
 })();
+
+/* LinkedIn Insight Tag (ad account 557804967). Page views + retargeting; lead.js fires the
+   "GASP | Lead | Site form" conversion (id 30134252) after a successful submit. */
+(() => {
+  const PARTNER_ID = "10261612";
+  if (!PARTNER_ID || window.lintrk) return;
+  window._linkedin_partner_id = PARTNER_ID;
+  window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+  window._linkedin_data_partner_ids.push(PARTNER_ID);
+  window.lintrk = function (a, b) { window.lintrk.q.push([a, b]); };
+  window.lintrk.q = [];
+  const s = document.getElementsByTagName("script")[0];
+  const b = document.createElement("script");
+  b.type = "text/javascript"; b.async = true;
+  b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+  s.parentNode.insertBefore(b, s);
+})();
