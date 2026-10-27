@@ -14,7 +14,10 @@
   const fbc = cookie("_fbc") || (qs.get("fbclid") ? `fb.1.${Date.now()}.${qs.get("fbclid")}` : "");
   const QUALIFIED = ["10-25", "26-50"];
   const EMAIL = /^[A-Za-z0-9._%+'-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-  const event_id = uid(); // one id per form view, reused on retry so Meta never double counts
+  const event_id = uid(); // one id per form view, reused on retry so Meta never double counts (X's conversion_id too)
+  // X event ids from Events Manager > Add event (install with pixel AND Conversion API, so both halves share the event); empty = not fired
+  const X_LEAD = "", X_QUALIFIED = "";
+  const twclid = qs.get("twclid") || cookie("gasp_twclid");
   const page = form.dataset.page || "site";
 
   form.querySelectorAll("[required]").forEach(el => {
@@ -56,7 +59,7 @@
     try {
       const r = await fetch("/api/lead", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...f, event_id, fbp: cookie("_fbp"), fbc, page, url: location.href, t: Math.round(performance.now() - t0) })
+        body: JSON.stringify({ ...f, event_id, fbp: cookie("_fbp"), fbc, twclid, page, url: location.href, t: Math.round(performance.now() - t0) })
       });
       j = await r.json().catch(() => ({}));
       if (!r.ok || !j.ok) throw new Error(j.error || "send");
@@ -73,6 +76,10 @@
       }
     } catch (_) {}
     try { if (window.lintrk) lintrk("track", { conversion_id: 30134252 }); } catch (_) {}
+    try {
+      if (window.twq && X_LEAD) twq("event", X_LEAD, { conversion_id: event_id });
+      if (window.twq && X_QUALIFIED && QUALIFIED.includes(f.size)) twq("event", X_QUALIFIED, { conversion_id: event_id + "-q" });
+    } catch (_) {}
     done(f, /^https:\/\//i.test(j.booking_url || "") ? j.booking_url : null);
   });
 })();

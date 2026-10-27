@@ -31,3 +31,20 @@
   b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
   s.parentNode.insertBefore(b, s);
 })();
+
+/* X Pixel (ads account 18ce55y43fm, pixel ri1ae). Page views feed the auto-created "Site visits" and "Landing page views"
+   events; lead.js fires Lead / QualifiedLead after a successful submit. The server half is the X Conversion API, sent by the
+   lead fleet (gasp-agency-primary fleet-api/src/xads.js) with the same conversion_id, so X counts each fill once.
+   An ad click lands with ?twclid=: it is kept 30 days in a first-party cookie so a fill on a later page still credits the ad. */
+(() => {
+  const PIXEL_ID = "ri1ae";
+  const click = new URLSearchParams(location.search).get("twclid");
+  if (click && /^[A-Za-z0-9_-]{6,200}$/.test(click)) document.cookie = `gasp_twclid=${click}; Max-Age=2592000; Path=/; SameSite=Lax; Secure`;
+  if (!PIXEL_ID || window.twq) return;
+  !function (e, t, n, s, u, a) {
+    e.twq || (s = e.twq = function () { s.exe ? s.exe.apply(s, arguments) : s.queue.push(arguments); },
+      s.version = "1.1", s.queue = [], u = t.createElement(n), u.async = !0, u.src = "https://static.ads-twitter.com/uwt.js",
+      a = t.getElementsByTagName(n)[0], a.parentNode.insertBefore(u, a));
+  }(window, document, "script");
+  twq("config", PIXEL_ID);
+})();
